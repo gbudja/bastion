@@ -1,0 +1,96 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Bastion .gitignore
+# ═══════════════════════════════════════════════════════════════════════
+
+# ─── Secrets & Keys (CRITICAL) ────────────────────────────────────────
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.secret
+*.secrets
+*_rsa
+*_ecdsa
+*_ed25519
+id_rsa
+id_ecdsa
+id_ed25519
+
+# ─── Environment & Config (CRITICAL) ─────────────────────────────────
+.env
+.env.*
+!.env.example
+*.env
+secrets.yaml
+secrets.yml
+secrets.json
+credentials.yaml
+credentials.json
+
+# Bastion config (only .example files are committed)
+config/bastion.yaml
+config/rules.yaml
+config/*.yaml
+!config/*.example.yaml
+/etc/bastion/
+
+# ─── Python ──────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+*.whl
+
+# ─── Virtual Environments ────────────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ─── IDE / Editor ────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+
+# ─── Testing ─────────────────────────────────────────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
+coverage.xml
+.tox/
+
+# ─── Type Checking / Linting ─────────────────────────────────────────
+.mypy_cache/
+.ruff_cache/
+
+# ─── Logs & Runtime ──────────────────────────────────────────────────
+*.log
+*.pid
+/var/log/bastion/
+/var/run/bastion/
+
+# ─── OS ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# ─── Database / State ────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
