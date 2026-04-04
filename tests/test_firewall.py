@@ -530,26 +530,20 @@ class TestApiAndWeb:
 class TestCli:
     def test_start_demo_command(self, monkeypatch):
         class FakeSocketIO:
-            def __init__(self, app, async_mode, cors_allowed_origins):
-                self.app = app
-                self.async_mode = async_mode
-                self.cors_allowed_origins = cors_allowed_origins
-                self.started_task = None
+            def __init__(self, *args: object, **kwargs: object) -> None:
+                # Capture key configuration for assertions
+                self.async_mode = kwargs.get("async_mode", args[1] if len(args) > 1 else None)
                 self.run_called = False
+                self.run_kwargs: dict = {}
 
-            def start_background_task(self, target):
-                self.started_task = target
-
-            def emit(self, *_args, **_kwargs):
+            def emit(self, *_args: object, **_kwargs: object) -> None:
                 return None
 
-            def run(self, _app, host, port, use_reloader):
+            def run(self, _app: object, **kwargs: object) -> None:
                 self.run_called = True
-                assert host == "127.0.0.1"
-                assert port == 9443
-                assert use_reloader is False
+                self.run_kwargs = dict(kwargs)
 
-        fake_socket = FakeSocketIO(None, "eventlet", "*")
+        fake_socket = FakeSocketIO()
 
         monkeypatch.setattr("flask_socketio.SocketIO", lambda *args, **kwargs: fake_socket)
         monkeypatch.setattr("bastion.core.manager.RuleManager.load", lambda self: None)
@@ -559,6 +553,12 @@ class TestCli:
             ["start", "--demo", "--host", "127.0.0.1", "--port", "9443"],
         )
 
-        assert result.exit_code == 0
-        assert fake_socket.started_task is not None
+        assert result.exit_code == 0, result.output
+        # Server must use threading mode — not eventlet (broken on Python 3.12)
+        assert fake_socket.async_mode == "threading"
         assert fake_socket.run_called is True
+        assert fake_socket.run_kwargs.get("host") == "127.0.0.1"
+        assert fake_socket.run_kwargs.get("port") == 9443
+        assert fake_socket.run_kwargs.get("use_reloader") is False
+        # Werkzeug dev server must be explicitly acknowledged
+        assert fake_socket.run_kwargs.get("allow_unsafe_werkzeug") is True

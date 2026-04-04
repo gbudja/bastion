@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import sys
+import threading
 from pathlib import Path
 
 import click
@@ -127,28 +128,52 @@ def start(host: str, port: int, demo: bool, config: str | None) -> None:
     console.print(info_table)
     console.print()
 
-    # Start the server
+    # Server setup.
+    #
+    # We use async_mode="threading" (Werkzeug's built-in threaded dev server)
+    # rather than eventlet or gevent. Reasons:
+    #
+    #   1. Eventlet requires monkey patching to be the very first import at
+    #      process startup. That is incompatible with our lazy-import pattern
+    #      and makes the entry point brittle.
+    #   2. Eventlet 0.35+ is broken on Python 3.12 due to ssl/threading changes.
+    #   3. Threading mode has no such requirements — standard blocking I/O
+    #      works correctly because each request/task runs in its own OS thread.
+    #
+    # For a production deployment, swap socketio.run() for a proper WSGI
+    # server (gunicorn + gevent worker, or uvicorn with the ASGI adapter).
+    # See docs/SECURE_DEPLOYMENT.md.
     from flask_socketio import SocketIO
 
-    socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins="*")
+    socketio = SocketIO(app, async_mode="threading", cors_allowed_origins="*")
 
-    # Background task for metric collection
-    def background_metrics() -> None:
-        """Push metrics via WebSocket every 5 seconds."""
+    # Background task: push metrics to any connected WebSocket clients.
+    # Runs as a daemon thread so it exits cleanly when the main process ends.
+    def _background_metrics() -> None:
         import time
 
+        log = logging.getLogger(__name__)
         while True:
             try:
                 data = monitor.get_dashboard_data()
                 socketio.emit("metrics_update", data, namespace="/ws")
-            except Exception as e:
-                logging.getLogger(__name__).error("Metric collection error: %s", e)
+            except Exception as exc:
+                log.error("Metric collection error: %s", exc)
             time.sleep(5)
 
-    socketio.start_background_task(background_metrics)
+    metrics_thread = threading.Thread(
+        target=_background_metrics,
+        daemon=True,
+        name="bastion-metrics",
+    )
+    metrics_thread.start()
 
     console.print("[green]✓ Bastion is running[/green]\n")
-    socketio.run(app, host=host, port=port, use_reloader=False)
+
+    # allow_unsafe_werkzeug=True acknowledges that we are intentionally using
+    # the Werkzeug development server. Replace with a production WSGI server
+    # (e.g. gunicorn) before exposing Bastion on a real network.
+    socketio.run(app, host=host, port=port, use_reloader=False, allow_unsafe_werkzeug=True)
 
 
 @cli.command()

@@ -9,9 +9,7 @@ from __future__ import annotations
 import os
 import secrets
 from pathlib import Path
-from typing import Any
-
-from flask import Flask, render_template
+from flask import Flask, Response, jsonify, render_template
 
 from bastion.api.routes import api_bp, init_api
 from bastion.core.manager import RuleManager
@@ -57,7 +55,7 @@ def create_app(
         return render_template("dashboard.html", demo_mode=demo_mode)
 
     @app.route("/health")
-    def health() -> dict[str, Any]:
-        return {"status": "ok", "version": "0.1.0"}
+    def health() -> tuple[Response, int]:
+        return jsonify({"status": "ok", "version": "0.1.0"}), 200
 
     return app

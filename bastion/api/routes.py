@@ -65,6 +65,25 @@ def _parse_enum(value: str | None, enum_type: type[Direction] | type[RuleState])
         raise ValueError(f"Invalid value '{value}'. Expected one of: {valid}") from exc
 
 
+def _require_rule_manager() -> RuleManager:
+    """Return the rule manager or raise a 503 if not initialised."""
+    if _rule_manager is None:
+        raise RuntimeError("API not initialised")
+    return _rule_manager
+
+
+def _require_monitor() -> NetworkMonitor:
+    if _monitor is None:
+        raise RuntimeError("API not initialised")
+    return _monitor
+
+
+def _require_plugin_manager() -> PluginManager:
+    if _plugin_manager is None:
+        raise RuntimeError("API not initialised")
+    return _plugin_manager
+
+
 # ═══════════════════════════════════════════════════════════════════════
 #  FIREWALL RULES
 # ═══════════════════════════════════════════════════════════════════════
@@ -73,7 +92,10 @@ def _parse_enum(value: str | None, enum_type: type[Direction] | type[RuleState])
 @api_bp.route("/rules", methods=["GET"])
 def list_rules() -> tuple[Response, int]:
     """List all firewall rules with optional filtering."""
-    assert _rule_manager is not None
+    try:
+        manager = _require_rule_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
 
     # Query parameters for filtering
     group = request.args.get("group")
@@ -83,7 +105,7 @@ def list_rules() -> tuple[Response, int]:
     tags = request.args.getlist("tag")
 
     try:
-        rules = _rule_manager.search_rules(
+        rules = manager.search_rules(
             query=query,
             group=group,
             state=_parse_enum(state, RuleState),
@@ -99,14 +121,17 @@ def list_rules() -> tuple[Response, int]:
 @api_bp.route("/rules", methods=["POST"])
 def create_rule() -> tuple[Response, int]:
     """Create a new firewall rule."""
-    assert _rule_manager is not None
+    try:
+        manager = _require_rule_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
 
     data = request.get_json(silent=True)
     if not data:
         return api_response(error="Request body must be JSON", status=400)
 
     try:
-        rule = _rule_manager.create_rule(data)
+        rule = manager.create_rule(data)
         return api_response(rule.to_dict(), status=201)
     except ValueError as e:
         return api_response(error=str(e), status=400)
@@ -115,9 +140,12 @@ def create_rule() -> tuple[Response, int]:
 @api_bp.route("/rules/<rule_id>", methods=["GET"])
 def get_rule(rule_id: str) -> tuple[Response, int]:
     """Get a single rule by ID."""
-    assert _rule_manager is not None
+    try:
+        manager = _require_rule_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
 
-    rule = _rule_manager.get_rule(rule_id)
+    rule = manager.get_rule(rule_id)
     if not rule:
         return api_response(error="Rule not found", status=404)
     return api_response(rule.to_dict())
@@ -126,14 +154,17 @@ def get_rule(rule_id: str) -> tuple[Response, int]:
 @api_bp.route("/rules/<rule_id>", methods=["PUT"])
 def update_rule(rule_id: str) -> tuple[Response, int]:
     """Update an existing rule."""
-    assert _rule_manager is not None
+    try:
+        manager = _require_rule_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
 
     data = request.get_json(silent=True)
     if not data:
         return api_response(error="Request body must be JSON", status=400)
 
     try:
-        rule = _rule_manager.update_rule(rule_id, data)
+        rule = manager.update_rule(rule_id, data)
         if not rule:
             return api_response(error="Rule not found", status=404)
         return api_response(rule.to_dict())
@@ -144,9 +175,12 @@ def update_rule(rule_id: str) -> tuple[Response, int]:
 @api_bp.route("/rules/<rule_id>", methods=["DELETE"])
 def delete_rule(rule_id: str) -> tuple[Response, int]:
     """Delete a rule."""
-    assert _rule_manager is not None
+    try:
+        manager = _require_rule_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
 
-    if _rule_manager.delete_rule(rule_id):
+    if manager.delete_rule(rule_id):
         return api_response({"deleted": rule_id})
     return api_response(error="Rule not found", status=404)
 
@@ -154,9 +188,12 @@ def delete_rule(rule_id: str) -> tuple[Response, int]:
 @api_bp.route("/rules/<rule_id>/toggle", methods=["POST"])
 def toggle_rule(rule_id: str) -> tuple[Response, int]:
     """Toggle a rule between enabled and disabled."""
-    assert _rule_manager is not None
+    try:
+        manager = _require_rule_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
 
-    rule = _rule_manager.toggle_rule(rule_id)
+    rule = manager.toggle_rule(rule_id)
     if not rule:
         return api_response(error="Rule not found", status=404)
     return api_response(rule.to_dict())
@@ -165,9 +202,12 @@ def toggle_rule(rule_id: str) -> tuple[Response, int]:
 @api_bp.route("/rules/groups", methods=["GET"])
 def list_rule_groups() -> tuple[Response, int]:
     """List all rule groups with their rules."""
-    assert _rule_manager is not None
+    try:
+        manager = _require_rule_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
 
-    groups = _rule_manager.get_groups()
+    groups = manager.get_groups()
     result = {name: [r.to_dict() for r in rules] for name, rules in groups.items()}
     return api_response(result)
 
@@ -178,8 +218,12 @@ def list_rule_groups() -> tuple[Response, int]:
 @api_bp.route("/rules/apply", methods=["POST"])
 def apply_rules() -> tuple[Response, int]:
     """Apply the current ruleset to the system."""
-    assert _rule_manager is not None
-    result = _rule_manager.apply()
+    try:
+        manager = _require_rule_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
+
+    result = manager.apply()
     status = 200 if result.get("success") else 500
     return api_response(result, status=status)
 
@@ -187,16 +231,24 @@ def apply_rules() -> tuple[Response, int]:
 @api_bp.route("/rules/validate", methods=["GET"])
 def validate_rules() -> tuple[Response, int]:
     """Validate the current ruleset (dry run)."""
-    assert _rule_manager is not None
-    result = _rule_manager.validate()
+    try:
+        manager = _require_rule_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
+
+    result = manager.validate()
     return api_response(result)
 
 
 @api_bp.route("/rules/rollback", methods=["POST"])
 def rollback_rules() -> tuple[Response, int]:
     """Rollback to the previous ruleset."""
-    assert _rule_manager is not None
-    success = _rule_manager.rollback()
+    try:
+        manager = _require_rule_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
+
+    success = manager.rollback()
     if success:
         return api_response({"rolled_back": True})
     return api_response(error="No previous state available for rollback", status=400)
@@ -210,15 +262,23 @@ def rollback_rules() -> tuple[Response, int]:
 @api_bp.route("/monitor/stats", methods=["GET"])
 def get_stats() -> tuple[Response, int]:
     """Get current system and network statistics."""
-    assert _monitor is not None
-    return api_response(_monitor.get_dashboard_data())
+    try:
+        monitor = _require_monitor()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
+
+    return api_response(monitor.get_dashboard_data())
 
 
 @api_bp.route("/monitor/hosts", methods=["GET"])
 def get_hosts() -> tuple[Response, int]:
     """Get discovered network hosts."""
-    assert _monitor is not None
-    hosts = _monitor.discover_hosts()
+    try:
+        monitor = _require_monitor()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
+
+    hosts = monitor.discover_hosts()
     return api_response(
         [
             {
@@ -262,16 +322,24 @@ def get_sessions() -> tuple[Response, int]:
 @api_bp.route("/plugins", methods=["GET"])
 def list_plugins() -> tuple[Response, int]:
     """List all plugins and their status."""
-    assert _plugin_manager is not None
-    return api_response(_plugin_manager.get_status())
+    try:
+        pm = _require_plugin_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
+
+    return api_response(pm.get_status())
 
 
 @api_bp.route("/plugins/<name>/enable", methods=["POST"])
 def enable_plugin(name: str) -> tuple[Response, int]:
     """Enable a plugin."""
-    assert _plugin_manager is not None
+    try:
+        pm = _require_plugin_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
+
     config = request.get_json(silent=True) or {}
-    if _plugin_manager.enable_plugin(name, config):
+    if pm.enable_plugin(name, config):
         return api_response({"enabled": name})
     return api_response(error=f"Failed to enable plugin '{name}'", status=400)
 
@@ -279,8 +347,12 @@ def enable_plugin(name: str) -> tuple[Response, int]:
 @api_bp.route("/plugins/<name>/disable", methods=["POST"])
 def disable_plugin(name: str) -> tuple[Response, int]:
     """Disable a plugin."""
-    assert _plugin_manager is not None
-    if _plugin_manager.disable_plugin(name):
+    try:
+        pm = _require_plugin_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
+
+    if pm.disable_plugin(name):
         return api_response({"disabled": name})
     return api_response(error=f"Failed to disable plugin '{name}'", status=400)
 
@@ -288,8 +360,12 @@ def disable_plugin(name: str) -> tuple[Response, int]:
 @api_bp.route("/plugins/<name>/routes", methods=["GET"])
 def list_plugin_routes(name: str) -> tuple[Response, int]:
     """List API routes exposed by a plugin."""
-    assert _plugin_manager is not None
-    plugin = _plugin_manager.get_plugin(name)
+    try:
+        pm = _require_plugin_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
+
+    plugin = pm.get_plugin(name)
     if plugin is None:
         return api_response(error=f"Plugin '{name}' not found", status=404)
 
@@ -307,8 +383,12 @@ def list_plugin_routes(name: str) -> tuple[Response, int]:
 @api_bp.route("/plugins/<name>/api/<path:subpath>", methods=["GET", "POST"])
 def call_plugin_route(name: str, subpath: str) -> tuple[Response, int]:
     """Invoke a plugin-defined API route through a stable proxy endpoint."""
-    assert _plugin_manager is not None
-    plugin = _plugin_manager.get_plugin(name)
+    try:
+        pm = _require_plugin_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
+
+    plugin = pm.get_plugin(name)
     if plugin is None:
         return api_response(error=f"Plugin '{name}' not found", status=404)
 
@@ -337,12 +417,16 @@ def system_info() -> tuple[Response, int]:
     """Get Bastion system information."""
     import platform
 
+    nft_available = False
+    if _rule_manager is not None:
+        nft_available = _rule_manager.backend.is_available()
+
     return api_response(
         {
             "version": "0.1.0",
             "hostname": platform.node(),
             "platform": platform.platform(),
             "python": platform.python_version(),
-            "nftables_available": _rule_manager.backend.is_available() if _rule_manager else False,
+            "nftables_available": nft_available,
         }
     )

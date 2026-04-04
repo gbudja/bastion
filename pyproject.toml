@@ -34,7 +34,10 @@ dependencies = [
     "psutil>=5.9",
     "click>=8.1",
     "rich>=13.0",
-    "eventlet>=0.35",
+    # eventlet intentionally excluded: broken on Python 3.12 and requires
+    # process-wide monkey patching. Bastion uses async_mode="threading"
+    # (Werkzeug dev server) which has no such requirements.
+    # For production deployments, use gunicorn with gevent workers instead.
 ]
 
 [project.optional-dependencies]

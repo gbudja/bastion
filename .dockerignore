@@ -41,12 +41,8 @@ config/*.yml
 !config/*.example.yaml
 !config/*.example.yml
 
-# Docs (not needed at runtime)
+# Docs not needed at runtime
 docs/
-README.md
-CONTRIBUTING.md
-SECURITY.md
-LICENSE
 
 # Type checker caches
 .mypy_cache/
