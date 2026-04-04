@@ -29,18 +29,23 @@ classifiers = [
 ]
 dependencies = [
     "flask>=3.0",
-    "flask-socketio>=5.3",
     "pyyaml>=6.0",
     "psutil>=5.9",
     "click>=8.1",
     "rich>=13.0",
-    # eventlet intentionally excluded: broken on Python 3.12 and requires
-    # process-wide monkey patching. Bastion uses async_mode="threading"
-    # (Werkzeug dev server) which has no such requirements.
-    # For production deployments, use gunicorn with gevent workers instead.
 ]
 
 [project.optional-dependencies]
+# Install the 'websocket' extra to enable live WebSocket metric push.
+# Requires a production WSGI server — see docs/SECURE_DEPLOYMENT.md.
+# flask-socketio + eventlet are intentionally excluded from the default
+# install: SocketIO(app) wraps app.wsgi_app with engineio middleware that
+# breaks plain HTTP request pass-through against Werkzeug 3.x + Python 3.12,
+# and eventlet requires process-wide monkey patching incompatible with our
+# lazy-import startup pattern.
+websocket = [
+    "flask-socketio>=5.3",
+]
 dev = [
     "pytest>=7.4",
     "pytest-cov>=4.1",

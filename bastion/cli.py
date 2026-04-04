@@ -128,52 +128,47 @@ def start(host: str, port: int, demo: bool, config: str | None) -> None:
     console.print(info_table)
     console.print()
 
-    # Server setup.
+    # ── Why we do NOT use Flask-SocketIO / engineio here ─────────────────
     #
-    # We use async_mode="threading" (Werkzeug's built-in threaded dev server)
-    # rather than eventlet or gevent. Reasons:
+    # `SocketIO(app)` permanently wraps app.wsgi_app with python-engineio's
+    # WSGIApp middleware. In python-engineio 4.x + Werkzeug 3.x threading
+    # mode, the pass-through path for plain HTTP requests is broken: Flask
+    # generates the response, but the start_response callback through the
+    # engineio middleware layer does not flush it to the client. Every HTTP
+    # request hangs indefinitely. This affects even trivial routes like
+    # /health that have no I/O at all.
     #
-    #   1. Eventlet requires monkey patching to be the very first import at
-    #      process startup. That is incompatible with our lazy-import pattern
-    #      and makes the entry point brittle.
-    #   2. Eventlet 0.35+ is broken on Python 3.12 due to ssl/threading changes.
-    #   3. Threading mode has no such requirements — standard blocking I/O
-    #      works correctly because each request/task runs in its own OS thread.
-    #
-    # For a production deployment, swap socketio.run() for a proper WSGI
-    # server (gunicorn + gevent worker, or uvicorn with the ASGI adapter).
-    # See docs/SECURE_DEPLOYMENT.md.
-    from flask_socketio import SocketIO
+    # Fix: do not create the SocketIO instance. Serve directly with
+    # app.run(threaded=True), which gives each request its own OS thread
+    # with no intervening middleware. WebSocket support can be added in a
+    # future production-mode path using gunicorn + gevent workers.
+    # ─────────────────────────────────────────────────────────────────────
 
-    socketio = SocketIO(app, async_mode="threading", cors_allowed_origins="*")
-
-    # Background task: push metrics to any connected WebSocket clients.
-    # Runs as a daemon thread so it exits cleanly when the main process ends.
+    # Background metrics collection — stores data in monitor.system_history
+    # and monitor.network_history for the REST API to serve on demand.
     def _background_metrics() -> None:
         import time
 
         log = logging.getLogger(__name__)
         while True:
             try:
-                data = monitor.get_dashboard_data()
-                socketio.emit("metrics_update", data, namespace="/ws")
+                monitor.get_dashboard_data()
             except Exception as exc:
-                log.error("Metric collection error: %s", exc)
+                log.debug("Metric collection error: %s", exc)
             time.sleep(5)
 
-    metrics_thread = threading.Thread(
+    threading.Thread(
         target=_background_metrics,
         daemon=True,
         name="bastion-metrics",
-    )
-    metrics_thread.start()
+    ).start()
 
     console.print("[green]✓ Bastion is running[/green]\n")
 
-    # allow_unsafe_werkzeug=True acknowledges that we are intentionally using
-    # the Werkzeug development server. Replace with a production WSGI server
-    # (e.g. gunicorn) before exposing Bastion on a real network.
-    socketio.run(app, host=host, port=port, use_reloader=False, allow_unsafe_werkzeug=True)
+    # Werkzeug threaded dev server — correct for demo mode.
+    # For production use, run behind gunicorn:
+    #   gunicorn "bastion.web.app:create_app(...)" --workers 4 --bind 0.0.0.0:8443
+    app.run(host=host, port=port, threaded=True, use_reloader=False, debug=False)
 
 
 @cli.command()

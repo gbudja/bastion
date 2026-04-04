@@ -3,11 +3,16 @@ Bastion Network Monitor
 
 Collects real-time system and network metrics including CPU, memory,
 disk, interface statistics, connection tracking, and host discovery.
+
+In demo mode all collection methods return deterministic simulated data
+so the monitor works correctly in Docker containers and on non-Linux
+systems where psutil operations may fail or require elevated privileges.
 """
 
 from __future__ import annotations
 
 import logging
+import math
 import time
 from collections import deque
 from dataclasses import dataclass, field
@@ -92,13 +97,17 @@ class NetworkMonitor:
     Collects periodic snapshots of system resources, network interfaces,
     and connection tracking data. Maintains a rolling history for
     time-series display in the dashboard.
+
+    When demo_mode=True all methods return simulated data — no psutil
+    calls are made, so the monitor works in unprivileged containers and
+    on Windows or macOS development machines.
     """
 
     def __init__(self, interval: int = 5, demo_mode: bool = False) -> None:
         """
         Args:
             interval: Seconds between metric collection cycles.
-            demo_mode: If True, generate simulated data.
+            demo_mode: If True, return simulated data instead of calling psutil.
         """
         self.interval = interval
         self.demo_mode = demo_mode
@@ -110,14 +119,78 @@ class NetworkMonitor:
         # Host tracking
         self.hosts: dict[str, TrackedHost] = {}
 
-        # Last snapshot for rate calculation
+        # Last snapshot for rate calculation (live mode only)
         self._last_net_counters: dict[str, Any] | None = None
         self._last_net_time: float | None = None
+
+        # Demo mode: stable base time so simulation curves are consistent
+        self._demo_start: float = time.time()
+
+    # ─── Demo helpers ────────────────────────────────────────────────
+
+    def _demo_system_stats(self) -> SystemStats:
+        """Return smoothly varying simulated system stats."""
+        t = time.time() - self._demo_start
+        cpu = 15.0 + math.sin(t / 20.0) * 10.0 + (math.sin(t * 3.7) * 3.0)
+        mem_pct = 38.0 + math.sin(t / 60.0) * 5.0
+        disk_pct = min(42.0 + t * 0.001, 95.0)
+        mem_total = 8 * 1024**3
+        return SystemStats(
+            timestamp=time.time(),
+            cpu_percent=max(1.0, min(99.0, cpu)),
+            cpu_count=4,
+            memory_total=mem_total,
+            memory_used=int(mem_total * mem_pct / 100),
+            memory_percent=mem_pct,
+            disk_total=100 * 1024**3,
+            disk_used=int(100 * 1024**3 * disk_pct / 100),
+            disk_percent=disk_pct,
+            load_avg=(max(0.0, 0.5 + math.sin(t / 30)), 0.4, 0.3),
+            uptime=t + 3600 * 26,  # simulate 26 h uptime at start
+        )
+
+    def _demo_network_snapshot(self) -> NetworkSnapshot:
+        """Return smoothly varying simulated network snapshot."""
+        t = time.time() - self._demo_start
+        base_in = 45000.0 + math.sin(t / 30.0) * 20000.0
+        base_out = 12000.0 + math.sin(t / 25.0) * 8000.0
+        bps_in = max(0.0, base_in + math.sin(t * 5.1) * 5000.0)
+        bps_out = max(0.0, base_out + math.sin(t * 4.3) * 3000.0)
+        sessions = max(0, int(80 + math.sin(t / 15.0) * 30))
+        eth0 = InterfaceStats(
+            name="eth0",
+            bytes_sent=int(1e9 + bps_out * t),
+            bytes_recv=int(4e9 + bps_in * t),
+            packets_sent=int(1e6),
+            packets_recv=int(4e6),
+            errors_in=0,
+            errors_out=0,
+            drops_in=0,
+            drops_out=0,
+            speed_mbps=1000,
+            is_up=True,
+            addresses=[{"family": "AF_INET", "address": "172.17.0.2", "netmask": "255.255.0.0"}],
+        )
+        return NetworkSnapshot(
+            timestamp=time.time(),
+            interfaces={"eth0": eth0},
+            total_bytes_sent=eth0.bytes_sent,
+            total_bytes_recv=eth0.bytes_recv,
+            total_connections=sessions + 60,
+            active_sessions=sessions,
+            bytes_per_sec_in=bps_in,
+            bytes_per_sec_out=bps_out,
+        )
 
     # ─── System Metrics ──────────────────────────────────────────────
 
     def collect_system_stats(self) -> SystemStats:
         """Collect current system resource usage."""
+        if self.demo_mode:
+            stats = self._demo_system_stats()
+            self.system_history.append(stats)
+            return stats
+
         mem = psutil.virtual_memory()
         disk = psutil.disk_usage("/")
 
@@ -142,6 +215,11 @@ class NetworkMonitor:
 
     def collect_network_stats(self) -> NetworkSnapshot:
         """Collect current network interface and connection statistics."""
+        if self.demo_mode:
+            snapshot = self._demo_network_snapshot()
+            self.network_history.append(snapshot)
+            return snapshot
+
         now = time.time()
 
         # Interface counters
@@ -196,16 +274,24 @@ class NetworkMonitor:
         self._last_net_counters = net_io
         self._last_net_time = now
 
-        # Connection tracking
-        connections = psutil.net_connections(kind="inet")
-        active_sessions = len([c for c in connections if c.status == "ESTABLISHED"])
+        # psutil.net_connections requires elevated privileges on some systems.
+        # Catch AccessDenied and return zero counts rather than crashing.
+        try:
+            connections = psutil.net_connections(kind="inet")
+            active_sessions = len([c for c in connections if c.status == "ESTABLISHED"])
+            total_connections = len(connections)
+        except (psutil.AccessDenied, PermissionError):
+            logger.debug("net_connections: access denied, reporting zero connections")
+            connections = []
+            active_sessions = 0
+            total_connections = 0
 
         snapshot = NetworkSnapshot(
             timestamp=now,
             interfaces=interfaces,
             total_bytes_sent=total_sent,
             total_bytes_recv=total_recv,
-            total_connections=len(connections),
+            total_connections=total_connections,
             active_sessions=active_sessions,
             bytes_per_sec_in=bps_in,
             bytes_per_sec_out=bps_out,
@@ -219,7 +305,31 @@ class NetworkMonitor:
     def discover_hosts(self) -> list[TrackedHost]:
         """
         Discover active hosts by examining the ARP table and active connections.
+
+        In demo mode returns a small static list of placeholder hosts so the
+        dashboard hosts panel shows data without requiring /proc access.
         """
+        if self.demo_mode:
+            now = time.time()
+            return [
+                TrackedHost(
+                    ip_address="192.168.1.1",
+                    mac_address="aa:bb:cc:dd:ee:01",
+                    hostname="gateway.local",
+                    first_seen=now - 3600,
+                    last_seen=now,
+                    active_connections=3,
+                ),
+                TrackedHost(
+                    ip_address="192.168.1.100",
+                    mac_address="aa:bb:cc:dd:ee:02",
+                    hostname="workstation.local",
+                    first_seen=now - 1800,
+                    last_seen=now - 30,
+                    active_connections=1,
+                ),
+            ]
+
         now = time.time()
 
         # Parse ARP table
@@ -271,6 +381,7 @@ class NetworkMonitor:
         Collect all metrics for the dashboard in a single call.
 
         Returns a dict suitable for JSON serialization and WebSocket push.
+        In demo mode, all data is simulated — no system calls are made.
         """
         system = self.collect_system_stats()
         network = self.collect_network_stats()

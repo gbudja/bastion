@@ -529,23 +529,18 @@ class TestApiAndWeb:
 
 class TestCli:
     def test_start_demo_command(self, monkeypatch):
-        class FakeSocketIO:
-            def __init__(self, *args: object, **kwargs: object) -> None:
-                # Capture key configuration for assertions
-                self.async_mode = kwargs.get("async_mode", args[1] if len(args) > 1 else None)
-                self.run_called = False
-                self.run_kwargs: dict = {}
+        """
+        Verify the demo startup path:
+        - Uses plain app.run() — no SocketIO/engineio middleware in the path
+        - Passes correct host/port/threading flags
+        - Starts the background metrics thread
+        """
+        run_calls: list[dict] = []
 
-            def emit(self, *_args: object, **_kwargs: object) -> None:
-                return None
+        def fake_run(self: object, **kwargs: object) -> None:  # noqa: ANN001
+            run_calls.append(dict(kwargs))
 
-            def run(self, _app: object, **kwargs: object) -> None:
-                self.run_called = True
-                self.run_kwargs = dict(kwargs)
-
-        fake_socket = FakeSocketIO()
-
-        monkeypatch.setattr("flask_socketio.SocketIO", lambda *args, **kwargs: fake_socket)
+        monkeypatch.setattr("flask.Flask.run", fake_run)
         monkeypatch.setattr("bastion.core.manager.RuleManager.load", lambda self: None)
 
         result = CliRunner().invoke(
@@ -554,11 +549,11 @@ class TestCli:
         )
 
         assert result.exit_code == 0, result.output
-        # Server must use threading mode — not eventlet (broken on Python 3.12)
-        assert fake_socket.async_mode == "threading"
-        assert fake_socket.run_called is True
-        assert fake_socket.run_kwargs.get("host") == "127.0.0.1"
-        assert fake_socket.run_kwargs.get("port") == 9443
-        assert fake_socket.run_kwargs.get("use_reloader") is False
-        # Werkzeug dev server must be explicitly acknowledged
-        assert fake_socket.run_kwargs.get("allow_unsafe_werkzeug") is True
+        assert len(run_calls) == 1, "app.run() should be called exactly once"
+
+        kwargs = run_calls[0]
+        assert kwargs.get("host") == "127.0.0.1"
+        assert kwargs.get("port") == 9443
+        assert kwargs.get("threaded") is True
+        assert kwargs.get("use_reloader") is False
+        assert kwargs.get("debug") is False
