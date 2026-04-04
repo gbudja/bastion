@@ -8,24 +8,28 @@ Bastion is designed with security-first principles, including strict input valid
 
 ---
 
+> **No authentication is implemented yet.** Do not expose the API or dashboard to untrusted networks. See [SECURITY.md](SECURITY.md) and [docs/SECURE_DEPLOYMENT.md](docs/SECURE_DEPLOYMENT.md) for details.
+
+---
+
 ## Quick Demo
 
 ```bash
 pip install -e .
-set BASTION_SECRET_KEY=dev
+export BASTION_SECRET_KEY=dev   # demo only — do not use in production
 bastion start --demo
 ```
 
 Test the health endpoint:
 
 ```bash
-curl http://localhost:8000/health
+curl http://localhost:8443/health
 ```
 
 Expected response:
 
 ```json
-{"status": "ok"}
+{"status": "ok", "version": "0.1.0"}
 ```
 
 ---
@@ -81,7 +85,7 @@ export BASTION_SECRET_KEY="$(python -c 'import secrets; print(secrets.token_hex(
 
 ## Running Bastion
 
-### Demo mode
+### Demo mode (no root, no nftables required)
 
 ```bash
 bastion start --demo
@@ -91,20 +95,14 @@ bastion start --demo
 
 ```bash
 export BASTION_SECRET_KEY="replace-with-a-real-secret"
-bastion start
+sudo bastion start
 ```
 
-The dashboard is available at:
+The dashboard is available at `http://<host>:<port>/`.
 
-```
-http://<host>:<port>/
-```
+Health endpoint: `GET /health`
 
-Health endpoint:
-
-```
-GET /health
-```
+> **Warning:** Live mode binds to `0.0.0.0` by default and has no authentication. Use `--host 127.0.0.1` to restrict to loopback, or run behind an authenticated reverse proxy. See [docs/SECURE_DEPLOYMENT.md](docs/SECURE_DEPLOYMENT.md).
 
 ---
 
@@ -115,17 +113,20 @@ Example configuration files:
 * [config/bastion.example.yaml](config/bastion.example.yaml)
 * [config/rules.example.yaml](config/rules.example.yaml)
 
-`BASTION_SECRET_KEY` must be provided via environment variables and is not stored in configuration files.
+Copy them and customize:
+
+```bash
+cp config/bastion.example.yaml config/bastion.yaml
+cp config/rules.example.yaml config/rules.yaml
+```
+
+`BASTION_SECRET_KEY` must be provided via environment variable. It is not stored in any committed config file.
 
 ---
 
 ## API
 
-Base path:
-
-```
-/api/v1
-```
+Base path: `/api/v1`
 
 ### Firewall routes
 
@@ -142,8 +143,6 @@ Base path:
 | POST   | `/api/v1/rules/apply`            | Apply rules             |
 | POST   | `/api/v1/rules/rollback`         | Roll back rules         |
 
----
-
 ### Monitoring routes
 
 | Method | Endpoint                   | Description       |
@@ -151,8 +150,6 @@ Base path:
 | GET    | `/api/v1/monitor/stats`    | Dashboard metrics |
 | GET    | `/api/v1/monitor/hosts`    | Discovered hosts  |
 | GET    | `/api/v1/monitor/sessions` | Active sessions   |
-
----
 
 ### Plugin routes
 
@@ -164,8 +161,6 @@ Base path:
 | GET      | `/api/v1/plugins/<name>/routes`        | Plugin routes       |
 | GET/POST | `/api/v1/plugins/<name>/api/<subpath>` | Invoke plugin route |
 
----
-
 ### System route
 
 | Method | Endpoint              | Description              |
@@ -176,10 +171,7 @@ Base path:
 
 ## DNS Filtering Plugin
 
-Relevant files:
-
-* [bastion/plugins/dns_filter/**init**.py](bastion/plugins/dns_filter/__init__.py)
-* [bastion/plugins/dns_filter/blocklist.py](bastion/plugins/dns_filter/blocklist.py)
+The bundled DNS filter plugin lives in [bastion/plugins/dns_filter/](bastion/plugins/dns_filter/).
 
 Features:
 
@@ -203,6 +195,7 @@ bastion/
   web/
     templates/
 config/
+docs/
 tests/
   test_firewall.py
   test_dns_filter.py
@@ -219,6 +212,17 @@ python -m ruff check bastion tests
 python -m black --check bastion tests
 python -m mypy bastion --ignore-missing-imports
 ```
+
+---
+
+## Docker (local evaluation)
+
+```bash
+docker build -t bastion .
+docker run --rm -p 8443:8443 bastion
+```
+
+Runs in demo mode. For live mode, pass `-e BASTION_SECRET_KEY=<value>` and ensure nftables is available on the host.
 
 ---
 
@@ -239,6 +243,12 @@ python -m mypy bastion --ignore-missing-imports
 * [ ] VPN management
 * [ ] Traffic shaping
 * [ ] HA clustering
+
+---
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for vulnerability reporting. See [docs/SECURE_DEPLOYMENT.md](docs/SECURE_DEPLOYMENT.md) for hardening guidance.
 
 ---
 

@@ -26,10 +26,11 @@ def create_app(
     demo_mode: bool = False,
 ) -> Flask:
     """Create and configure the Flask application."""
+    static_dir = Path(__file__).parent / "static"
     app = Flask(
         __name__,
         template_folder=str(Path(__file__).parent / "templates"),
-        static_folder=str(Path(__file__).parent / "static"),
+        static_folder=str(static_dir) if static_dir.exists() else None,
     )
 
     # Secret key must come from environment — never hardcoded in production.

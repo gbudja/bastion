@@ -94,6 +94,19 @@ def start(host: str, port: int, demo: bool, config: str | None) -> None:
     except Exception as e:
         console.print(f"[yellow]⚠[/yellow] Could not load rules: {e}")
 
+    # Warn when binding to all interfaces in non-demo mode (no auth yet)
+    if not demo and host in ("0.0.0.0", "::"):
+        console.print(
+            Panel(
+                "[red]WARNING:[/red] Binding to all interfaces with no authentication.\n"
+                "The API and dashboard are open to any reachable client.\n"
+                "Use [bold]--host 127.0.0.1[/bold] or run behind an authenticated reverse proxy.\n"
+                "See [bold]docs/SECURE_DEPLOYMENT.md[/bold] for guidance.",
+                title="Security Notice",
+                border_style="red",
+            )
+        )
+
     # Check nftables availability
     if not demo and not backend.is_available():
         console.print(

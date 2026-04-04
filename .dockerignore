@@ -1,0 +1,57 @@
+# Git
+.git/
+.gitignore
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Tests and CI
+tests/
+.github/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+coverage.xml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Secrets and local config — never bake into image
+.env
+.env.local
+.env.*
+secrets/
+config/*.yaml
+config/*.yml
+!config/*.example.yaml
+!config/*.example.yml
+
+# Docs (not needed at runtime)
+docs/
+README.md
+CONTRIBUTING.md
+SECURITY.md
+LICENSE
+
+# Type checker caches
+.mypy_cache/
+.ruff_cache/
+
+# OS
+.DS_Store
+Thumbs.db
