@@ -1,0 +1,176 @@
+# ═══════════════════════════════════════════════════════════════════════
+#  Bastion Firewall Rules
+#  Declarative rule definitions — applied atomically via nftables
+# ═══════════════════════════════════════════════════════════════════════
+
+version: "1"
+
+tables:
+  bastion:
+    family: inet
+    chains:
+      # ─── Inbound Traffic ────────────────────────────────────────
+      input:
+        type: filter
+        hook: input
+        priority: 0
+        policy: drop
+        rules:
+          # Allow established/related connections
+          - id: "base0001"
+            name: "Allow established"
+            description: "Allow packets from established and related connections"
+            direction: inbound
+            protocol: any
+            action: accept
+            priority: 10
+            state: enabled
+            tags: [base, essential]
+            group: base
+
+          # Allow loopback
+          - id: "base0002"
+            name: "Allow loopback"
+            description: "Allow all traffic on loopback interface"
+            direction: inbound
+            protocol: any
+            interface_in: lo
+            action: accept
+            priority: 11
+            state: enabled
+            tags: [base, essential]
+            group: base
+
+          # Allow ICMP (ping)
+          - id: "base0003"
+            name: "Allow ICMP"
+            description: "Allow ICMP for ping and network diagnostics"
+            direction: inbound
+            protocol: icmp
+            action: accept
+            priority: 20
+            state: enabled
+            tags: [base, diagnostics]
+            group: base
+
+          # SSH Access
+          - id: "ssh0001"
+            name: "Allow SSH"
+            description: "Allow SSH access from management network"
+            direction: inbound
+            protocol: tcp
+            source_address: "10.0.0.0/8"
+            destination_port: "22"
+            action: accept
+            priority: 50
+            state: enabled
+            tags: [management, ssh]
+            group: management
+
+          # Bastion Dashboard
+          - id: "mgmt0001"
+            name: "Allow Dashboard"
+            description: "Allow access to the Bastion web dashboard"
+            direction: inbound
+            protocol: tcp
+            source_address: "10.0.0.0/8"
+            destination_port: "8443"
+            action: accept
+            priority: 51
+            state: enabled
+            tags: [management, dashboard]
+            group: management
+
+          # Web Services
+          - id: "web0001"
+            name: "Allow HTTP"
+            description: "Allow HTTP traffic"
+            direction: inbound
+            protocol: tcp
+            destination_port: "80"
+            action: accept
+            priority: 100
+            state: enabled
+            tags: [web]
+            group: web_services
+
+          - id: "web0002"
+            name: "Allow HTTPS"
+            description: "Allow HTTPS traffic"
+            direction: inbound
+            protocol: tcp
+            destination_port: "443"
+            action: accept
+            priority: 101
+            state: enabled
+            tags: [web, tls]
+            group: web_services
+
+          # DNS
+          - id: "dns0001"
+            name: "Allow DNS (TCP)"
+            description: "Allow DNS over TCP"
+            direction: inbound
+            protocol: tcp
+            destination_port: "53"
+            action: accept
+            priority: 110
+            state: enabled
+            tags: [dns]
+            group: network_services
+
+          - id: "dns0002"
+            name: "Allow DNS (UDP)"
+            description: "Allow DNS over UDP"
+            direction: inbound
+            protocol: udp
+            destination_port: "53"
+            action: accept
+            priority: 111
+            state: enabled
+            tags: [dns]
+            group: network_services
+
+          # Rate limit protection
+          - id: "prot0001"
+            name: "Rate limit new connections"
+            description: "Rate limit incoming TCP connections to prevent flooding"
+            direction: inbound
+            protocol: tcp
+            action: rate_limit
+            rate_limit:
+              rate: 25
+              period: second
+              burst: 50
+            priority: 900
+            state: disabled
+            tags: [protection, rate_limit]
+            group: protection
+
+      # ─── Outbound Traffic ───────────────────────────────────────
+      output:
+        type: filter
+        hook: output
+        priority: 0
+        policy: accept
+        rules: []
+
+      # ─── Forwarded Traffic ──────────────────────────────────────
+      forward:
+        type: filter
+        hook: forward
+        priority: 0
+        policy: drop
+        rules:
+          - id: "fwd0001"
+            name: "Allow LAN to WAN"
+            description: "Allow internal network to access the internet"
+            direction: forward
+            protocol: any
+            source_address: "192.168.1.0/24"
+            interface_out: eth0
+            action: accept
+            priority: 100
+            state: enabled
+            tags: [forwarding, nat]
+            group: routing

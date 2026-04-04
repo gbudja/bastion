@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bastion — Network Gateway</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-primary: #0a0e14;
+  --bg-secondary: #111820;
+  --bg-card: #151d28;
+  --bg-card-hover: #1a2332;
+  --border: #1e2a3a;
+  --border-active: #2a3a4e;
+  --text-primary: #e6edf3;
+  --text-secondary: #7d8fa3;
+  --text-dim: #4a5568;
+  --accent-green: #00e5a0;
+  --accent-green-dim: rgba(0, 229, 160, 0.15);
+  --accent-red: #ff4757;
+  --accent-red-dim: rgba(255, 71, 87, 0.12);
+  --accent-amber: #ffa940;
+  --accent-amber-dim: rgba(255, 169, 64, 0.12);
+  --accent-blue: #3b82f6;
+  --accent-blue-dim: rgba(59, 130, 246, 0.12);
+  --accent-cyan: #22d3ee;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+html { font-size: 14px; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ═══ TOPBAR ═══ */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-logo {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--bg-primary);
+}
+
+.topbar-title {
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+}
+
+.topbar-title span { color: var(--text-dim); font-weight: 400; margin-left: 6px; font-size: 0.85rem; }
+
+.topbar-nav {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.topbar-nav button {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.topbar-nav button.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.topbar-nav button:hover:not(.active) { color: var(--text-primary); }
+
+.topbar-status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.status-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* ═══ MAIN LAYOUT ═══ */
+.main {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: calc(100vh - 56px);
+}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar {
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  padding: 20px 0;
+}
+
+.sidebar-section {
+  margin-bottom: 24px;
+}
+
+.sidebar-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  padding: 0 20px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 400;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+}
+
+.sidebar-item:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.sidebar-item.active {
+  color: var(--accent-green);
+  border-left-color: var(--accent-green);
+  background: var(--accent-green-dim);
+}
+
+.sidebar-item svg { width: 16px; height: 16px; opacity: 0.7; }
+
+.sidebar-badge {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-dim);
+}
+
+/* ═══ CONTENT ═══ */
+.content {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.content-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.content-header-sub {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+
+/* ═══ STAT CARDS ROW ═══ */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  transition: border-color 0.2s;
+}
+
+.stat-card:hover { border-color: var(--border-active); }
+
+.stat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.stat-card-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.stat-card-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-card-icon.green { background: var(--accent-green-dim); color: var(--accent-green); }
+.stat-card-icon.red { background: var(--accent-red-dim); color: var(--accent-red); }
+.stat-card-icon.amber { background: var(--accent-amber-dim); color: var(--accent-amber); }
+.stat-card-icon.blue { background: var(--accent-blue-dim); color: var(--accent-blue); }
+
+.stat-card-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.stat-card-detail {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ═══ GRID PANELS ═══ */
+.panels-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.panel-badge {
+  font-size: 0.65rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.panel-badge.live {
+  background: var(--accent-green-dim);
+  color: var(--accent-green);
+}
+
+.panel-body { padding: 20px; }
+
+/* ═══ CHARTS ═══ */
+.chart-container {
+  height: 180px;
+  position: relative;
+}
+
+canvas { width: 100% !important; height: 100% !important; }
+
+/* ═══ GAUGE ═══ */
+.gauges-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.gauge-item { text-align: center; }
+
+.gauge-ring {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 10px;
+  position: relative;
+}
+
+.gauge-ring svg { transform: rotate(-90deg); }
+
+.gauge-ring circle {
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.gauge-ring .bg { stroke: var(--border); }
+
+.gauge-ring .fg { transition: stroke-dashoffset 0.8s ease; }
+
+.gauge-value {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.gauge-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ═══ RULES TABLE ═══ */
+.rules-panel { grid-column: 1 / -1; }
+
+.rules-toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.rules-search {
+  flex: 1;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 12px;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.rules-search:focus { border-color: var(--accent-green); }
+
+.rules-search::placeholder { color: var(--text-dim); }
+
+.btn {
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+
+.btn:hover {
+  border-color: var(--border-active);
+  color: var(--text-primary);
+}
+
+.btn-primary {
+  background: var(--accent-green);
+  color: var(--bg-primary);
+  border-color: var(--accent-green);
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: #00cc8f;
+  border-color: #00cc8f;
+  color: var(--bg-primary);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead th {
+  text-align: left;
+  padding: 10px 16px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+
+tbody td {
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(30, 42, 58, 0.5);
+  vertical-align: middle;
+}
+
+tbody tr { transition: background 0.1s; }
+tbody tr:hover { background: var(--bg-card-hover); }
+
+.rule-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.rule-state-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.rule-state-dot.enabled { background: var(--accent-green); }
+.rule-state-dot.disabled { background: var(--text-dim); }
+
+.rule-action {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.action-accept { background: var(--accent-green-dim); color: var(--accent-green); }
+.action-drop { background: var(--accent-red-dim); color: var(--accent-red); }
+.action-reject { background: var(--accent-amber-dim); color: var(--accent-amber); }
+
+.rule-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  background: var(--bg-primary);
+  color: var(--text-dim);
+  margin-right: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+/* ═══ NETWORK LAYOUT PANEL ═══ */
+.network-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+}
+
+.net-node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  font-weight: 500;
+  width: 100%;
+  max-width: 220px;
+}
+
+.net-node.external {
+  background: var(--accent-blue-dim);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: var(--accent-blue);
+}
+
+.net-node.bastion {
+  background: linear-gradient(135deg, var(--accent-green-dim), rgba(34, 211, 238, 0.1));
+  border: 1px solid rgba(0, 229, 160, 0.3);
+  color: var(--accent-green);
+  position: relative;
+}
+
+.net-node.internal {
+  background: var(--accent-amber-dim);
+  border: 1px solid rgba(255, 169, 64, 0.3);
+  color: var(--accent-amber);
+}
+
+.net-pipe {
+  width: 2px;
+  height: 28px;
+  background: var(--border-active);
+  position: relative;
+}
+
+.net-pipe::before, .net-pipe::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+}
+
+.net-pipe::after {
+  bottom: -4px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--border-active);
+}
+
+.net-rate {
+  display: flex;
+  gap: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.net-rate .in { color: var(--accent-green); }
+.net-rate .out { color: var(--accent-amber); }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 1200px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .main { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .panels-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-active); }
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stat-card, .panel { animation: fadeSlideIn 0.4s ease both; }
+.stat-card:nth-child(2), .panel:nth-child(2) { animation-delay: 0.05s; }
+.stat-card:nth-child(3), .panel:nth-child(3) { animation-delay: 0.1s; }
+.stat-card:nth-child(4), .panel:nth-child(4) { animation-delay: 0.15s; }
+</style>
+</head>
+<body>
+
+<!-- ═══ TOPBAR ═══ -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">B</div>
+    <div class="topbar-title">Bastion <span>v0.1.0</span></div>
+  </div>
+  <div class="topbar-nav">
+    <button class="active">Dashboard</button>
+    <button>Rules</button>
+    <button>Sessions</button>
+    <button>Plugins</button>
+    <button>Config</button>
+  </div>
+  <div class="topbar-status">
+    <div class="status-dot"></div>
+    <span class="status-label" id="uptime">uptime: 0d 0h 0m</span>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Monitoring</div>
+      <div class="sidebar-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Overview
+      </div>
+      <div class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Traffic
+      </div>
+      <div class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>
+        Hosts
+        <span class="sidebar-badge" id="host-count">0</span>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Firewall</div>
+      <div class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Rules
+        <span class="sidebar-badge" id="rule-count">12</span>
+      </div>
+      <div class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="5" width="22" height="14" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Interfaces
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">System</div>
+      <div class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+        Resources
+      </div>
+      <div class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+        Plugins
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="content-header">
+      <div>
+        <h1>Dashboard</h1>
+        <div class="content-header-sub">Real-time network gateway monitoring</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="refreshData()">↻ Refresh</button>
+        <button class="btn btn-primary" onclick="applyRules()">▶ Apply Rules</button>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-card-label">Active Sessions</span>
+          <div class="stat-card-icon green">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+        </div>
+        <div class="stat-card-value" id="active-sessions">—</div>
+        <div class="stat-card-detail" id="total-connections">0 total connections</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-card-label">Throughput In</span>
+          <div class="stat-card-icon blue">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          </div>
+        </div>
+        <div class="stat-card-value" id="throughput-in">—</div>
+        <div class="stat-card-detail" id="throughput-in-detail">bytes/sec</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-card-label">Throughput Out</span>
+          <div class="stat-card-icon amber">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+          </div>
+        </div>
+        <div class="stat-card-value" id="throughput-out">—</div>
+        <div class="stat-card-detail" id="throughput-out-detail">bytes/sec</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-card-label">Firewall Rules</span>
+          <div class="stat-card-icon red">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+        </div>
+        <div class="stat-card-value" id="fw-rules">12</div>
+        <div class="stat-card-detail">10 enabled · 2 disabled</div>
+      </div>
+    </div>
+
+    <!-- CHARTS + GAUGES ROW -->
+    <div class="panels-grid">
+
+      <!-- Throughput Chart -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Network Throughput</span>
+          <span class="panel-badge live">● LIVE</span>
+        </div>
+        <div class="panel-body">
+          <div class="chart-container">
+            <canvas id="throughputChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Resources -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">System Resources</span>
+          <span class="panel-badge live">● LIVE</span>
+        </div>
+        <div class="panel-body">
+          <div class="gauges-row">
+            <div class="gauge-item">
+              <div class="gauge-ring">
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                  <circle class="bg" cx="50" cy="50" r="42"/>
+                  <circle class="fg" cx="50" cy="50" r="42" stroke="var(--accent-green)"
+                    stroke-dasharray="264" stroke-dashoffset="264" id="cpu-gauge"/>
+                </svg>
+                <div class="gauge-value" id="cpu-val">0%</div>
+              </div>
+              <div class="gauge-label">CPU</div>
+            </div>
+            <div class="gauge-item">
+              <div class="gauge-ring">
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                  <circle class="bg" cx="50" cy="50" r="42"/>
+                  <circle class="fg" cx="50" cy="50" r="42" stroke="var(--accent-cyan)"
+                    stroke-dasharray="264" stroke-dashoffset="264" id="mem-gauge"/>
+                </svg>
+                <div class="gauge-value" id="mem-val">0%</div>
+              </div>
+              <div class="gauge-label">Memory</div>
+            </div>
+            <div class="gauge-item">
+              <div class="gauge-ring">
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                  <circle class="bg" cx="50" cy="50" r="42"/>
+                  <circle class="fg" cx="50" cy="50" r="42" stroke="var(--accent-amber)"
+                    stroke-dasharray="264" stroke-dashoffset="264" id="disk-gauge"/>
+                </svg>
+                <div class="gauge-value" id="disk-val">0%</div>
+              </div>
+              <div class="gauge-label">Disk</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Network Layout -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Network Layout</span>
+        </div>
+        <div class="panel-body">
+          <div class="network-layout">
+            <div class="net-node external">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+              External (WAN)
+            </div>
+            <div class="net-pipe"></div>
+            <div class="net-rate">
+              <span class="in">↓ <span id="net-in-rate">0 KB/s</span></span>
+              <span class="out">↑ <span id="net-out-rate">0 KB/s</span></span>
+            </div>
+            <div class="net-pipe"></div>
+            <div class="net-node bastion">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Bastion Gateway
+            </div>
+            <div class="net-pipe"></div>
+            <div class="net-rate">
+              <span class="in">↓ <span id="net-lan-in">0 KB/s</span></span>
+              <span class="out">↑ <span id="net-lan-out">0 KB/s</span></span>
+            </div>
+            <div class="net-pipe"></div>
+            <div class="net-node internal">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/><line x1="14" y1="10" x2="14" y2="14"/><line x1="18" y1="10" x2="18" y2="14"/></svg>
+              Internal (LAN)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CPU History Chart -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">CPU History</span>
+          <span class="panel-badge live">● LIVE</span>
+        </div>
+        <div class="panel-body">
+          <div class="chart-container">
+            <canvas id="cpuChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIREWALL RULES TABLE -->
+    <div class="panel rules-panel">
+      <div class="panel-header">
+        <span class="panel-title">Firewall Rules</span>
+        <span class="panel-badge" style="background:var(--bg-primary);color:var(--text-dim)">nftables</span>
+      </div>
+      <div class="rules-toolbar">
+        <input type="text" class="rules-search" placeholder="Search rules..." id="ruleSearch">
+        <button class="btn">Filter ▾</button>
+        <button class="btn btn-primary">+ Add Rule</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>State</th>
+            <th>Priority</th>
+            <th>Name</th>
+            <th>Direction</th>
+            <th>Protocol</th>
+            <th>Source</th>
+            <th>Dest Port</th>
+            <th>Action</th>
+            <th>Group</th>
+          </tr>
+        </thead>
+        <tbody id="rulesBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══ DEMO DATA ═══
+const DEMO_RULES = [
+  { state:'enabled', priority:10, name:'Allow established', direction:'inbound', protocol:'any', source:'*', dest_port:'*', action:'accept', group:'base', tags:['base','essential'] },
+  { state:'enabled', priority:11, name:'Allow loopback', direction:'inbound', protocol:'any', source:'lo', dest_port:'*', action:'accept', group:'base', tags:['base'] },
+  { state:'enabled', priority:20, name:'Allow ICMP', direction:'inbound', protocol:'icmp', source:'*', dest_port:'*', action:'accept', group:'base', tags:['diagnostics'] },
+  { state:'enabled', priority:50, name:'Allow SSH', direction:'inbound', protocol:'tcp', source:'10.0.0.0/8', dest_port:'22', action:'accept', group:'management', tags:['ssh'] },
+  { state:'enabled', priority:51, name:'Allow Dashboard', direction:'inbound', protocol:'tcp', source:'10.0.0.0/8', dest_port:'8443', action:'accept', group:'management', tags:['dashboard'] },
+  { state:'enabled', priority:100, name:'Allow HTTP', direction:'inbound', protocol:'tcp', source:'*', dest_port:'80', action:'accept', group:'web_services', tags:['web'] },
+  { state:'enabled', priority:101, name:'Allow HTTPS', direction:'inbound', protocol:'tcp', source:'*', dest_port:'443', action:'accept', group:'web_services', tags:['web','tls'] },
+  { state:'enabled', priority:110, name:'Allow DNS (TCP)', direction:'inbound', protocol:'tcp', source:'*', dest_port:'53', action:'accept', group:'network_services', tags:['dns'] },
+  { state:'enabled', priority:111, name:'Allow DNS (UDP)', direction:'inbound', protocol:'udp', source:'*', dest_port:'53', action:'accept', group:'network_services', tags:['dns'] },
+  { state:'disabled', priority:900, name:'Rate limit connections', direction:'inbound', protocol:'tcp', source:'*', dest_port:'*', action:'drop', group:'protection', tags:['rate_limit'] },
+  { state:'enabled', priority:100, name:'Allow LAN → WAN', direction:'forward', protocol:'any', source:'192.168.1.0/24', dest_port:'*', action:'accept', group:'routing', tags:['nat'] },
+  { state:'enabled', priority:999, name:'Drop all (default)', direction:'inbound', protocol:'any', source:'*', dest_port:'*', action:'drop', group:'base', tags:['default'] },
+];
+
+function renderRules(rules) {
+  const tbody = document.getElementById('rulesBody');
+  tbody.innerHTML = rules.map(r => `
+    <tr>
+      <td><span class="rule-state"><span class="rule-state-dot ${r.state}"></span>${r.state}</span></td>
+      <td class="mono">${r.priority}</td>
+      <td style="font-weight:500">${r.name}</td>
+      <td class="mono">${r.direction}</td>
+      <td class="mono">${r.protocol}</td>
+      <td class="mono">${r.source}</td>
+      <td class="mono">${r.dest_port}</td>
+      <td><span class="rule-action action-${r.action}">${r.action}</span></td>
+      <td>${r.tags.map(t=>`<span class="rule-tag">${t}</span>`).join('')}</td>
+    </tr>
+  `).join('');
+}
+
+renderRules(DEMO_RULES);
+
+document.getElementById('ruleSearch').addEventListener('input', function(e) {
+  const q = e.target.value.toLowerCase();
+  const filtered = DEMO_RULES.filter(r =>
+    r.name.toLowerCase().includes(q) ||
+    r.protocol.includes(q) ||
+    r.tags.some(t => t.includes(q)) ||
+    r.group.includes(q)
+  );
+  renderRules(filtered);
+});
+
+// ═══ SIMULATED LIVE DATA ═══
+const MAX_POINTS = 60;
+const throughputIn = Array(MAX_POINTS).fill(0);
+const throughputOut = Array(MAX_POINTS).fill(0);
+const cpuHistory = Array(MAX_POINTS).fill(0);
+const labels = Array(MAX_POINTS).fill('');
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes.toFixed(0) + ' B/s';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB/s';
+  return (bytes / 1048576).toFixed(2) + ' MB/s';
+}
+
+function formatUptime(seconds) {
+  const d = Math.floor(seconds / 86400);
+  const h = Math.floor((seconds % 86400) / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  return `uptime: ${d}d ${h}h ${m}m`;
+}
+
+// Gauge updater
+function setGauge(id, percent, valId) {
+  const circumference = 264;
+  const offset = circumference - (circumference * percent / 100);
+  document.getElementById(id).setAttribute('stroke-dashoffset', offset);
+  document.getElementById(valId).textContent = Math.round(percent) + '%';
+
+  // Color shift for high usage
+  const el = document.getElementById(id);
+  if (percent > 80) el.setAttribute('stroke', 'var(--accent-red)');
+  else if (percent > 60) el.setAttribute('stroke', 'var(--accent-amber)');
+}
+
+// ═══ CANVAS CHARTS (minimal, no library) ═══
+function drawChart(canvasId, datasets, opts = {}) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = rect.height;
+  const pad = { top: 10, right: 10, bottom: 20, left: 45 };
+  const cW = W - pad.left - pad.right;
+  const cH = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Find max
+  let maxVal = opts.maxY || 0;
+  datasets.forEach(ds => {
+    ds.data.forEach(v => { if (v > maxVal) maxVal = v; });
+  });
+  if (maxVal === 0) maxVal = 100;
+  maxVal *= 1.15;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(30,42,58,0.6)';
+  ctx.lineWidth = 0.5;
+  const gridLines = 4;
+  for (let i = 0; i <= gridLines; i++) {
+    const y = pad.top + (cH / gridLines) * i;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(pad.left + cW, y);
+    ctx.stroke();
+
+    // Labels
+    const val = maxVal - (maxVal / gridLines) * i;
+    ctx.fillStyle = '#4a5568';
+    ctx.font = '10px JetBrains Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(opts.formatY ? opts.formatY(val) : Math.round(val), pad.left - 6, y + 3);
+  }
+
+  // Draw datasets
+  datasets.forEach(ds => {
+    ctx.beginPath();
+    const data = ds.data;
+    for (let i = 0; i < data.length; i++) {
+      const x = pad.left + (cW / (data.length - 1)) * i;
+      const y = pad.top + cH - (data[i] / maxVal) * cH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = ds.color;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Fill gradient
+    const lastX = pad.left + cW;
+    const bottomY = pad.top + cH;
+    ctx.lineTo(lastX, bottomY);
+    ctx.lineTo(pad.left, bottomY);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, pad.top, 0, bottomY);
+    grad.addColorStop(0, ds.color.replace(')', ', 0.15)').replace('rgb', 'rgba'));
+    grad.addColorStop(1, ds.color.replace(')', ', 0)').replace('rgb', 'rgba'));
+    ctx.fillStyle = grad;
+    ctx.fill();
+  });
+}
+
+// ═══ SIMULATION LOOP ═══
+let simTime = 0;
+
+function simulate() {
+  simTime += 5;
+
+  // Generate realistic-looking data
+  const baseIn = 45000 + Math.sin(simTime / 30) * 20000;
+  const baseOut = 12000 + Math.sin(simTime / 25) * 8000;
+  const noise = () => (Math.random() - 0.5) * 15000;
+
+  const inVal = Math.max(0, baseIn + noise());
+  const outVal = Math.max(0, baseOut + noise());
+
+  throughputIn.push(inVal);
+  throughputIn.shift();
+  throughputOut.push(outVal);
+  throughputOut.shift();
+
+  const cpu = 15 + Math.sin(simTime / 20) * 10 + Math.random() * 8;
+  cpuHistory.push(cpu);
+  cpuHistory.shift();
+
+  const mem = 38 + Math.sin(simTime / 60) * 5 + Math.random() * 3;
+  const disk = 42 + simTime * 0.001;
+
+  // Update stat cards
+  const sessions = Math.floor(80 + Math.sin(simTime / 15) * 30 + Math.random() * 20);
+  const totalConn = sessions + Math.floor(Math.random() * 50) + 60;
+  document.getElementById('active-sessions').textContent = sessions;
+  document.getElementById('total-connections').textContent = totalConn + ' total connections';
+  document.getElementById('throughput-in').textContent = formatBytes(inVal);
+  document.getElementById('throughput-out').textContent = formatBytes(outVal);
+  document.getElementById('uptime').textContent = formatUptime(simTime + 3600 * 26);
+
+  // Update gauges
+  setGauge('cpu-gauge', cpu, 'cpu-val');
+  setGauge('mem-gauge', mem, 'mem-val');
+  setGauge('disk-gauge', Math.min(disk, 95), 'disk-val');
+
+  // Update network layout rates
+  document.getElementById('net-in-rate').textContent = formatBytes(inVal);
+  document.getElementById('net-out-rate').textContent = formatBytes(outVal);
+  document.getElementById('net-lan-in').textContent = formatBytes(inVal * 0.85);
+  document.getElementById('net-lan-out').textContent = formatBytes(outVal * 0.92);
+
+  // Update host count
+  document.getElementById('host-count').textContent = Math.floor(5 + Math.sin(simTime / 40) * 2);
+
+  // Draw charts
+  drawChart('throughputChart', [
+    { data: throughputIn, color: 'rgb(0, 229, 160)' },
+    { data: throughputOut, color: 'rgb(255, 169, 64)' },
+  ], { formatY: v => formatBytes(v).replace('/s', '') });
+
+  drawChart('cpuChart', [
+    { data: cpuHistory, color: 'rgb(59, 130, 246)' },
+  ], { maxY: 100, formatY: v => Math.round(v) + '%' });
+}
+
+// Initial render + interval
+simulate();
+setInterval(simulate, 2000);
+
+// Handle resize
+window.addEventListener('resize', simulate);
+
+function refreshData() { simulate(); }
+function applyRules() {
+  alert('Rules applied successfully (demo mode)');
+}
+</script>
+</body>
+</html>

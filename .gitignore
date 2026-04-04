@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.pytest_tmp/
+coverage.xml
+
+# Type checking
+.mypy_cache/
+.ruff_cache/
+
+# Config (user-specific — only .example variants are committed)
+config/*.yaml
+config/*.yml
+!config/*.example.yaml
+!config/*.example.yml
+
+# Logs
+*.log
+/var/log/bastion/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment / secrets
+.env
+.env.local
+.env.*
+!.env.example
+.envrc
+
+# Secrets directory
+secrets/
+
+# TLS/PKI credentials — never commit private keys or certificates
+*.pem
+*.key
+*.cert
+*.crt
+*.cer
+*.der
+*.p12
+*.pfx
+*.jks
+
+# Runtime data
+*.db
+*.sqlite
+*.sqlite3
