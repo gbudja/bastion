@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0e14"/>
+      <stop offset="50%" stop-color="#111820"/>
+      <stop offset="100%" stop-color="#0d1219"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00e5a0"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="line-fade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1e2a3a" stop-opacity="0"/>
+      <stop offset="15%" stop-color="#1e2a3a"/>
+      <stop offset="85%" stop-color="#1e2a3a"/>
+      <stop offset="100%" stop-color="#1e2a3a" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-strong">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e2a3a" stroke-width="0.5" opacity="0.4"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="400" fill="url(#bg)"/>
+  <rect width="1200" height="400" fill="url(#grid)"/>
+
+  <!-- Decorative network lines -->
+  <g opacity="0.15">
+    <line x1="100" y1="80" x2="350" y2="180" stroke="#00e5a0" stroke-width="1"/>
+    <line x1="350" y1="180" x2="500" y2="120" stroke="#00e5a0" stroke-width="1"/>
+    <line x1="500" y1="120" x2="700" y2="200" stroke="#22d3ee" stroke-width="1"/>
+    <line x1="850" y1="100" x2="1050" y2="180" stroke="#22d3ee" stroke-width="1"/>
+    <line x1="700" y1="200" x2="850" y2="100" stroke="#00e5a0" stroke-width="1"/>
+    <line x1="150" y1="300" x2="400" y2="250" stroke="#22d3ee" stroke-width="1"/>
+    <line x1="400" y1="250" x2="600" y2="320" stroke="#00e5a0" stroke-width="1"/>
+    <line x1="800" y1="280" x2="1000" y2="320" stroke="#22d3ee" stroke-width="1"/>
+    <line x1="1000" y1="320" x2="1100" y2="260" stroke="#00e5a0" stroke-width="1"/>
+  </g>
+
+  <!-- Node dots on network lines -->
+  <g opacity="0.25">
+    <circle cx="100" cy="80" r="3" fill="#00e5a0"/>
+    <circle cx="350" cy="180" r="4" fill="#00e5a0"/>
+    <circle cx="500" cy="120" r="3" fill="#22d3ee"/>
+    <circle cx="700" cy="200" r="4" fill="#22d3ee"/>
+    <circle cx="850" cy="100" r="3" fill="#00e5a0"/>
+    <circle cx="1050" cy="180" r="3" fill="#22d3ee"/>
+    <circle cx="150" cy="300" r="3" fill="#22d3ee"/>
+    <circle cx="400" cy="250" r="4" fill="#00e5a0"/>
+    <circle cx="600" cy="320" r="3" fill="#00e5a0"/>
+    <circle cx="800" cy="280" r="3" fill="#22d3ee"/>
+    <circle cx="1000" cy="320" r="4" fill="#22d3ee"/>
+    <circle cx="1100" cy="260" r="3" fill="#00e5a0"/>
+  </g>
+
+  <!-- Shield icon -->
+  <g transform="translate(470, 110)" filter="url(#glow)">
+    <path d="M 0 -50 L 40 -30 L 40 10 C 40 40 20 60 0 70 C -20 60 -40 40 -40 10 L -40 -30 Z"
+          fill="none" stroke="url(#accent)" stroke-width="2.5" opacity="0.9"/>
+    <path d="M 0 -30 L 22 -16 L 22 6 C 22 26 12 38 0 45 C -12 38 -22 26 -22 6 L -22 -16 Z"
+          fill="url(#accent)" opacity="0.08"/>
+    <!-- Checkmark inside shield -->
+    <polyline points="-12,5 -3,15 15,-8" fill="none" stroke="url(#accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Title -->
+  <text x="540" y="168" font-family="'Segoe UI', system-ui, sans-serif" font-size="64" font-weight="700" fill="#e6edf3" letter-spacing="-2" text-anchor="left">Bastion</text>
+
+  <!-- Accent line under title -->
+  <rect x="470" y="185" width="320" height="2" rx="1" fill="url(#accent)" opacity="0.6"/>
+
+  <!-- Subtitle -->
+  <text x="475" y="218" font-family="'Segoe UI', system-ui, sans-serif" font-size="18" fill="#7d8fa3" font-weight="400" letter-spacing="0.5">Open-Source Network Gateway &amp; Firewall</text>
+
+  <!-- Version badge -->
+  <g transform="translate(475, 240)">
+    <rect width="56" height="22" rx="4" fill="#00e5a0" opacity="0.15"/>
+    <text x="28" y="15" font-family="'Courier New', monospace" font-size="11" fill="#00e5a0" text-anchor="middle" font-weight="600">v0.1.0</text>
+  </g>
+  <g transform="translate(540, 240)">
+    <rect width="62" height="22" rx="4" fill="#3b82f6" opacity="0.12"/>
+    <text x="31" y="15" font-family="'Courier New', monospace" font-size="11" fill="#3b82f6" text-anchor="middle" font-weight="600">Python</text>
+  </g>
+  <g transform="translate(611, 240)">
+    <rect width="68" height="22" rx="4" fill="#22d3ee" opacity="0.12"/>
+    <text x="34" y="15" font-family="'Courier New', monospace" font-size="11" fill="#22d3ee" text-anchor="middle" font-weight="600">nftables</text>
+  </g>
+  <g transform="translate(688, 240)">
+    <rect width="62" height="22" rx="4" fill="#ffa940" opacity="0.12"/>
+    <text x="31" y="15" font-family="'Courier New', monospace" font-size="11" fill="#ffa940" text-anchor="middle" font-weight="600">GPLv3</text>
+  </g>
+
+  <!-- Feature pills at bottom -->
+  <g transform="translate(475, 290)">
+    <text font-family="'Courier New', monospace" font-size="12" fill="#4a5568">
+      <tspan>firewall engine</tspan>
+      <tspan fill="#2a3a4e"> · </tspan>
+      <tspan>real-time dashboard</tspan>
+      <tspan fill="#2a3a4e"> · </tspan>
+      <tspan>REST API</tspan>
+      <tspan fill="#2a3a4e"> · </tspan>
+      <tspan>plugin system</tspan>
+      <tspan fill="#2a3a4e"> · </tspan>
+      <tspan>dual-stack IPv4/IPv6</tspan>
+    </text>
+  </g>
+
+  <!-- Bottom border line -->
+  <rect x="0" y="397" width="1200" height="3" fill="url(#accent)" opacity="0.4"/>
+</svg>

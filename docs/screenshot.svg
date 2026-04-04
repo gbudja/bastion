@@ -1,0 +1,263 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0e14"/>
+      <stop offset="100%" stop-color="#111820"/>
+    </linearGradient>
+    <clipPath id="rounded"><rect width="1200" height="700" rx="12"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#rounded)">
+  <!-- Background -->
+  <rect width="1200" height="700" fill="url(#bg)"/>
+
+  <!-- Window chrome -->
+  <rect width="1200" height="36" fill="#111820"/>
+  <circle cx="20" cy="18" r="6" fill="#ff4757" opacity="0.8"/>
+  <circle cx="40" cy="18" r="6" fill="#ffa940" opacity="0.8"/>
+  <circle cx="60" cy="18" r="6" fill="#00e5a0" opacity="0.8"/>
+  <text x="600" y="22" font-family="system-ui" font-size="12" fill="#4a5568" text-anchor="middle">Bastion — Dashboard</text>
+  <line x1="0" y1="36" x2="1200" y2="36" stroke="#1e2a3a"/>
+
+  <!-- Topbar -->
+  <rect y="36" width="1200" height="48" fill="#111820"/>
+  <rect x="20" y="44" width="32" height="32" rx="6" fill="#00e5a0" opacity="0.9"/>
+  <text x="36" y="66" font-family="system-ui" font-size="16" fill="#0a0e14" font-weight="700" text-anchor="middle">B</text>
+  <text x="62" y="65" font-family="system-ui" font-size="15" fill="#e6edf3" font-weight="600">Bastion</text>
+  <text x="130" y="65" font-family="monospace" font-size="11" fill="#4a5568">v0.1.0</text>
+
+  <!-- Nav pills -->
+  <g transform="translate(400, 48)">
+    <rect width="280" height="28" rx="6" fill="#0a0e14"/>
+    <rect x="4" y="3" width="70" height="22" rx="4" fill="#151d28"/>
+    <text x="39" y="18" font-family="system-ui" font-size="11" fill="#e6edf3" text-anchor="middle">Dashboard</text>
+    <text x="110" y="18" font-family="system-ui" font-size="11" fill="#7d8fa3" text-anchor="middle">Rules</text>
+    <text x="170" y="18" font-family="system-ui" font-size="11" fill="#7d8fa3" text-anchor="middle">Sessions</text>
+    <text x="240" y="18" font-family="system-ui" font-size="11" fill="#7d8fa3" text-anchor="middle">Config</text>
+  </g>
+
+  <!-- Status -->
+  <circle cx="1130" cy="60" r="4" fill="#00e5a0"/>
+  <text x="1145" y="64" font-family="monospace" font-size="10" fill="#7d8fa3">1d 2h</text>
+
+  <line x1="0" y1="84" x2="1200" y2="84" stroke="#1e2a3a"/>
+
+  <!-- Sidebar -->
+  <rect y="84" width="200" height="616" fill="#111820"/>
+  <line x1="200" y1="84" x2="200" y2="700" stroke="#1e2a3a"/>
+
+  <!-- Sidebar items -->
+  <text x="24" y="115" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="1">MONITORING</text>
+  <rect x="0" y="124" width="200" height="32" fill="rgba(0,229,160,0.08)"/>
+  <rect x="0" y="124" width="2" height="32" fill="#00e5a0"/>
+  <text x="24" y="144" font-family="system-ui" font-size="12" fill="#00e5a0">Overview</text>
+  <text x="24" y="174" font-family="system-ui" font-size="12" fill="#7d8fa3">Traffic</text>
+  <text x="24" y="200" font-family="system-ui" font-size="12" fill="#7d8fa3">Hosts</text>
+  <rect x="160" y="191" width="24" height="16" rx="3" fill="#0a0e14"/>
+  <text x="172" y="203" font-family="monospace" font-size="9" fill="#4a5568" text-anchor="middle">6</text>
+
+  <text x="24" y="240" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="1">FIREWALL</text>
+  <text x="24" y="264" font-family="system-ui" font-size="12" fill="#7d8fa3">Rules</text>
+  <rect x="160" y="255" width="24" height="16" rx="3" fill="#0a0e14"/>
+  <text x="172" y="267" font-family="monospace" font-size="9" fill="#4a5568" text-anchor="middle">12</text>
+  <text x="24" y="290" font-family="system-ui" font-size="12" fill="#7d8fa3">Interfaces</text>
+
+  <text x="24" y="330" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="1">SYSTEM</text>
+  <text x="24" y="354" font-family="system-ui" font-size="12" fill="#7d8fa3">Resources</text>
+  <text x="24" y="380" font-family="system-ui" font-size="12" fill="#7d8fa3">Plugins</text>
+
+  <!-- Content area -->
+  <!-- Header -->
+  <text x="224" y="118" font-family="system-ui" font-size="22" fill="#e6edf3" font-weight="600">Dashboard</text>
+  <text x="224" y="138" font-family="system-ui" font-size="12" fill="#7d8fa3">Real-time network gateway monitoring</text>
+
+  <!-- Buttons -->
+  <rect x="1040" y="102" width="70" height="28" rx="6" fill="#0a0e14" stroke="#1e2a3a"/>
+  <text x="1075" y="120" font-family="system-ui" font-size="11" fill="#7d8fa3" text-anchor="middle">↻ Refresh</text>
+  <rect x="1118" y="102" width="60" height="28" rx="6" fill="#00e5a0"/>
+  <text x="1148" y="120" font-family="system-ui" font-size="11" fill="#0a0e14" font-weight="600" text-anchor="middle">▶ Apply</text>
+
+  <!-- ═══ STAT CARDS ═══ -->
+  <!-- Card 1: Sessions -->
+  <rect x="224" y="155" width="230" height="95" rx="10" fill="#151d28" stroke="#1e2a3a"/>
+  <text x="244" y="178" font-family="system-ui" font-size="10" fill="#7d8fa3" letter-spacing="0.5">ACTIVE SESSIONS</text>
+  <rect x="420" y="163" width="24" height="24" rx="6" fill="rgba(0,229,160,0.15)"/>
+  <text x="432" y="179" font-family="system-ui" font-size="12" fill="#00e5a0" text-anchor="middle">↗</text>
+  <text x="244" y="218" font-family="monospace" font-size="28" fill="#e6edf3" font-weight="700">87</text>
+  <text x="244" y="238" font-family="monospace" font-size="10" fill="#4a5568">142 total connections</text>
+
+  <!-- Card 2: Throughput In -->
+  <rect x="470" y="155" width="230" height="95" rx="10" fill="#151d28" stroke="#1e2a3a"/>
+  <text x="490" y="178" font-family="system-ui" font-size="10" fill="#7d8fa3" letter-spacing="0.5">THROUGHPUT IN</text>
+  <rect x="666" y="163" width="24" height="24" rx="6" fill="rgba(59,130,246,0.12)"/>
+  <text x="678" y="179" font-family="system-ui" font-size="12" fill="#3b82f6" text-anchor="middle">↑</text>
+  <text x="490" y="218" font-family="monospace" font-size="28" fill="#e6edf3" font-weight="700">42.3</text>
+  <text x="588" y="218" font-family="monospace" font-size="14" fill="#7d8fa3">KB/s</text>
+
+  <!-- Card 3: Throughput Out -->
+  <rect x="716" y="155" width="230" height="95" rx="10" fill="#151d28" stroke="#1e2a3a"/>
+  <text x="736" y="178" font-family="system-ui" font-size="10" fill="#7d8fa3" letter-spacing="0.5">THROUGHPUT OUT</text>
+  <rect x="912" y="163" width="24" height="24" rx="6" fill="rgba(255,169,64,0.12)"/>
+  <text x="924" y="179" font-family="system-ui" font-size="12" fill="#ffa940" text-anchor="middle">↓</text>
+  <text x="736" y="218" font-family="monospace" font-size="28" fill="#e6edf3" font-weight="700">11.8</text>
+  <text x="834" y="218" font-family="monospace" font-size="14" fill="#7d8fa3">KB/s</text>
+
+  <!-- Card 4: Firewall Rules -->
+  <rect x="962" y="155" width="216" height="95" rx="10" fill="#151d28" stroke="#1e2a3a"/>
+  <text x="982" y="178" font-family="system-ui" font-size="10" fill="#7d8fa3" letter-spacing="0.5">FIREWALL RULES</text>
+  <rect x="1144" y="163" width="24" height="24" rx="6" fill="rgba(255,71,87,0.12)"/>
+  <text x="1156" y="179" font-family="system-ui" font-size="12" fill="#ff4757" text-anchor="middle">⛨</text>
+  <text x="982" y="218" font-family="monospace" font-size="28" fill="#e6edf3" font-weight="700">12</text>
+  <text x="982" y="238" font-family="monospace" font-size="10" fill="#4a5568">10 enabled · 2 disabled</text>
+
+  <!-- ═══ THROUGHPUT CHART ═══ -->
+  <rect x="224" y="268" width="480" height="200" rx="10" fill="#151d28" stroke="#1e2a3a"/>
+  <text x="244" y="292" font-family="system-ui" font-size="12" fill="#e6edf3" font-weight="600">Network Throughput</text>
+  <rect x="640" y="280" width="50" height="18" rx="4" fill="rgba(0,229,160,0.15)"/>
+  <text x="665" y="293" font-family="monospace" font-size="9" fill="#00e5a0" text-anchor="middle">● LIVE</text>
+
+  <!-- Chart area with fake line graph -->
+  <g transform="translate(260, 310)">
+    <!-- Grid lines -->
+    <line x1="0" y1="0" x2="420" y2="0" stroke="#1e2a3a" stroke-width="0.5"/>
+    <line x1="0" y1="35" x2="420" y2="35" stroke="#1e2a3a" stroke-width="0.5"/>
+    <line x1="0" y1="70" x2="420" y2="70" stroke="#1e2a3a" stroke-width="0.5"/>
+    <line x1="0" y1="105" x2="420" y2="105" stroke="#1e2a3a" stroke-width="0.5"/>
+    <line x1="0" y1="130" x2="420" y2="130" stroke="#1e2a3a" stroke-width="0.5"/>
+
+    <!-- Y-axis labels -->
+    <text x="-8" y="4" font-family="monospace" font-size="9" fill="#4a5568" text-anchor="end">64K</text>
+    <text x="-8" y="39" font-family="monospace" font-size="9" fill="#4a5568" text-anchor="end">48K</text>
+    <text x="-8" y="74" font-family="monospace" font-size="9" fill="#4a5568" text-anchor="end">32K</text>
+    <text x="-8" y="109" font-family="monospace" font-size="9" fill="#4a5568" text-anchor="end">16K</text>
+    <text x="-8" y="134" font-family="monospace" font-size="9" fill="#4a5568" text-anchor="end">0</text>
+
+    <!-- Inbound line (green) -->
+    <polyline points="0,80 20,65 40,72 60,45 80,55 100,38 120,50 140,30 160,42 180,35 200,48 220,28 240,40 260,32 280,45 300,25 320,38 340,42 360,30 380,22 400,35 420,28"
+      fill="none" stroke="#00e5a0" stroke-width="1.5" stroke-linejoin="round"/>
+    <!-- Inbound fill -->
+    <polyline points="0,80 20,65 40,72 60,45 80,55 100,38 120,50 140,30 160,42 180,35 200,48 220,28 240,40 260,32 280,45 300,25 320,38 340,42 360,30 380,22 400,35 420,28 420,130 0,130"
+      fill="#00e5a0" opacity="0.06"/>
+
+    <!-- Outbound line (amber) -->
+    <polyline points="0,105 20,100 40,108 60,95 80,102 100,90 120,98 140,85 160,92 180,88 200,96 220,82 240,90 260,85 280,95 300,80 320,88 340,92 360,84 380,78 400,88 420,82"
+      fill="none" stroke="#ffa940" stroke-width="1.5" stroke-linejoin="round"/>
+    <polyline points="0,105 20,100 40,108 60,95 80,102 100,90 120,98 140,85 160,92 180,88 200,96 220,82 240,90 260,85 280,95 300,80 320,88 340,92 360,84 380,78 400,88 420,82 420,130 0,130"
+      fill="#ffa940" opacity="0.04"/>
+  </g>
+
+  <!-- ═══ SYSTEM RESOURCES (GAUGES) ═══ -->
+  <rect x="720" y="268" width="458" height="200" rx="10" fill="#151d28" stroke="#1e2a3a"/>
+  <text x="740" y="292" font-family="system-ui" font-size="12" fill="#e6edf3" font-weight="600">System Resources</text>
+  <rect x="1114" y="280" width="50" height="18" rx="4" fill="rgba(0,229,160,0.15)"/>
+  <text x="1139" y="293" font-family="monospace" font-size="9" fill="#00e5a0" text-anchor="middle">● LIVE</text>
+
+  <!-- CPU Gauge -->
+  <g transform="translate(810, 380)">
+    <circle r="38" fill="none" stroke="#1e2a3a" stroke-width="5"/>
+    <circle r="38" fill="none" stroke="#00e5a0" stroke-width="5"
+      stroke-dasharray="239" stroke-dashoffset="183"
+      transform="rotate(-90)" stroke-linecap="round"/>
+    <text y="5" font-family="monospace" font-size="16" fill="#e6edf3" font-weight="600" text-anchor="middle">23%</text>
+    <text y="52" font-family="system-ui" font-size="11" fill="#7d8fa3" text-anchor="middle">CPU</text>
+  </g>
+
+  <!-- Memory Gauge -->
+  <g transform="translate(940, 380)">
+    <circle r="38" fill="none" stroke="#1e2a3a" stroke-width="5"/>
+    <circle r="38" fill="none" stroke="#22d3ee" stroke-width="5"
+      stroke-dasharray="239" stroke-dashoffset="144"
+      transform="rotate(-90)" stroke-linecap="round"/>
+    <text y="5" font-family="monospace" font-size="16" fill="#e6edf3" font-weight="600" text-anchor="middle">40%</text>
+    <text y="52" font-family="system-ui" font-size="11" fill="#7d8fa3" text-anchor="middle">Memory</text>
+  </g>
+
+  <!-- Disk Gauge -->
+  <g transform="translate(1070, 380)">
+    <circle r="38" fill="none" stroke="#1e2a3a" stroke-width="5"/>
+    <circle r="38" fill="none" stroke="#ffa940" stroke-width="5"
+      stroke-dasharray="239" stroke-dashoffset="138"
+      transform="rotate(-90)" stroke-linecap="round"/>
+    <text y="5" font-family="monospace" font-size="16" fill="#e6edf3" font-weight="600" text-anchor="middle">42%</text>
+    <text y="52" font-family="system-ui" font-size="11" fill="#7d8fa3" text-anchor="middle">Disk</text>
+  </g>
+
+  <!-- ═══ FIREWALL RULES TABLE ═══ -->
+  <rect x="224" y="486" width="954" height="200" rx="10" fill="#151d28" stroke="#1e2a3a"/>
+  <text x="244" y="510" font-family="system-ui" font-size="12" fill="#e6edf3" font-weight="600">Firewall Rules</text>
+  <rect x="1100" y="498" width="60" height="18" rx="4" fill="#0a0e14"/>
+  <text x="1130" y="511" font-family="monospace" font-size="9" fill="#4a5568" text-anchor="middle">nftables</text>
+
+  <!-- Search bar -->
+  <rect x="244" y="522" width="400" height="26" rx="5" fill="#0a0e14" stroke="#1e2a3a"/>
+  <text x="260" y="539" font-family="monospace" font-size="10" fill="#4a5568">Search rules...</text>
+  <rect x="1080" y="522" width="80" height="26" rx="5" fill="#00e5a0"/>
+  <text x="1120" y="539" font-family="system-ui" font-size="10" fill="#0a0e14" font-weight="600" text-anchor="middle">+ Add Rule</text>
+
+  <!-- Table header -->
+  <line x1="244" y1="560" x2="1158" y2="560" stroke="#1e2a3a"/>
+  <text x="260" y="576" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="0.5">STATE</text>
+  <text x="340" y="576" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="0.5">PRI</text>
+  <text x="390" y="576" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="0.5">NAME</text>
+  <text x="580" y="576" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="0.5">DIRECTION</text>
+  <text x="690" y="576" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="0.5">PROTOCOL</text>
+  <text x="790" y="576" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="0.5">SOURCE</text>
+  <text x="920" y="576" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="0.5">PORT</text>
+  <text x="990" y="576" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="0.5">ACTION</text>
+  <text x="1080" y="576" font-family="system-ui" font-size="9" fill="#4a5568" font-weight="600" letter-spacing="0.5">TAGS</text>
+  <line x1="244" y1="582" x2="1158" y2="582" stroke="#1e2a3a" opacity="0.5"/>
+
+  <!-- Row 1 -->
+  <circle cx="270" cy="600" r="3" fill="#00e5a0"/>
+  <text x="282" y="604" font-family="system-ui" font-size="10" fill="#7d8fa3">enabled</text>
+  <text x="340" y="604" font-family="monospace" font-size="10" fill="#7d8fa3">10</text>
+  <text x="390" y="604" font-family="system-ui" font-size="10" fill="#e6edf3" font-weight="500">Allow established</text>
+  <text x="580" y="604" font-family="monospace" font-size="10" fill="#7d8fa3">inbound</text>
+  <text x="690" y="604" font-family="monospace" font-size="10" fill="#7d8fa3">any</text>
+  <text x="790" y="604" font-family="monospace" font-size="10" fill="#7d8fa3">*</text>
+  <text x="920" y="604" font-family="monospace" font-size="10" fill="#7d8fa3">*</text>
+  <rect x="990" y="592" width="50" height="18" rx="3" fill="rgba(0,229,160,0.15)"/>
+  <text x="1015" y="605" font-family="monospace" font-size="9" fill="#00e5a0" text-anchor="middle">ACCEPT</text>
+  <rect x="1080" y="592" width="30" height="18" rx="3" fill="#0a0e14"/>
+  <text x="1095" y="605" font-family="monospace" font-size="8" fill="#4a5568" text-anchor="middle">base</text>
+
+  <!-- Row 2 -->
+  <circle cx="270" cy="628" r="3" fill="#00e5a0"/>
+  <text x="282" y="632" font-family="system-ui" font-size="10" fill="#7d8fa3">enabled</text>
+  <text x="340" y="632" font-family="monospace" font-size="10" fill="#7d8fa3">50</text>
+  <text x="390" y="632" font-family="system-ui" font-size="10" fill="#e6edf3" font-weight="500">Allow SSH</text>
+  <text x="580" y="632" font-family="monospace" font-size="10" fill="#7d8fa3">inbound</text>
+  <text x="690" y="632" font-family="monospace" font-size="10" fill="#7d8fa3">tcp</text>
+  <text x="790" y="632" font-family="monospace" font-size="10" fill="#7d8fa3">10.0.0.0/8</text>
+  <text x="920" y="632" font-family="monospace" font-size="10" fill="#7d8fa3">22</text>
+  <rect x="990" y="620" width="50" height="18" rx="3" fill="rgba(0,229,160,0.15)"/>
+  <text x="1015" y="633" font-family="monospace" font-size="9" fill="#00e5a0" text-anchor="middle">ACCEPT</text>
+  <rect x="1080" y="620" width="24" height="18" rx="3" fill="#0a0e14"/>
+  <text x="1092" y="633" font-family="monospace" font-size="8" fill="#4a5568" text-anchor="middle">ssh</text>
+
+  <!-- Row 3 -->
+  <circle cx="270" cy="656" r="3" fill="#00e5a0"/>
+  <text x="282" y="660" font-family="system-ui" font-size="10" fill="#7d8fa3">enabled</text>
+  <text x="340" y="660" font-family="monospace" font-size="10" fill="#7d8fa3">101</text>
+  <text x="390" y="660" font-family="system-ui" font-size="10" fill="#e6edf3" font-weight="500">Allow HTTPS</text>
+  <text x="580" y="660" font-family="monospace" font-size="10" fill="#7d8fa3">inbound</text>
+  <text x="690" y="660" font-family="monospace" font-size="10" fill="#7d8fa3">tcp</text>
+  <text x="790" y="660" font-family="monospace" font-size="10" fill="#7d8fa3">*</text>
+  <text x="920" y="660" font-family="monospace" font-size="10" fill="#7d8fa3">443</text>
+  <rect x="990" y="648" width="50" height="18" rx="3" fill="rgba(0,229,160,0.15)"/>
+  <text x="1015" y="661" font-family="monospace" font-size="9" fill="#00e5a0" text-anchor="middle">ACCEPT</text>
+  <rect x="1080" y="648" width="24" height="18" rx="3" fill="#0a0e14"/>
+  <text x="1092" y="661" font-family="monospace" font-size="8" fill="#4a5568" text-anchor="middle">web</text>
+  <rect x="1108" y="648" width="20" height="18" rx="3" fill="#0a0e14"/>
+  <text x="1118" y="661" font-family="monospace" font-size="8" fill="#4a5568" text-anchor="middle">tls</text>
+
+  <!-- Row dividers -->
+  <line x1="244" y1="614" x2="1158" y2="614" stroke="#1e2a3a" opacity="0.3"/>
+  <line x1="244" y1="642" x2="1158" y2="642" stroke="#1e2a3a" opacity="0.3"/>
+  <line x1="244" y1="670" x2="1158" y2="670" stroke="#1e2a3a" opacity="0.3"/>
+
+  </g>
+
+  <!-- Outer border -->
+  <rect width="1200" height="700" rx="12" fill="none" stroke="#1e2a3a" stroke-width="1"/>
+</svg>
