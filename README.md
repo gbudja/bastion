@@ -1,5 +1,9 @@
 # Bastion
 
+![Bastion banner](docs/banner.svg)
+
+![Bastion dashboard preview](docs/screenshot.svg)
+
 Bastion is a Python-based network gateway and firewall platform focused on strict rule validation, modular plugin enforcement, and API-driven policy management.
 
 It provides a structured, programmatic approach to defining and enforcing network security rules, with support for DNS filtering, rule chains, and production-safe validation.
@@ -29,7 +33,7 @@ curl http://localhost:8443/health
 Expected response:
 
 ```json
-{"status": "ok", "version": "0.1.0"}
+{"status": "ok", "version": "0.2.0"}
 ```
 
 ---

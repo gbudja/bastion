@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from bastion import __version__
 from bastion.plugins import BastionPlugin, PluginMeta
 from bastion.plugins.dns_filter.blocklist import BlocklistManager
 
@@ -124,7 +125,7 @@ class Plugin(BastionPlugin):
     def get_meta(self) -> PluginMeta:
         return PluginMeta(
             name="DNS Filter",
-            version="0.1.0",
+            version=__version__,
             description="Domain blocklist filtering with allowlist overrides",
             author="Bastion Contributors",
             config_schema={

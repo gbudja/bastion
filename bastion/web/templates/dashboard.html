@@ -28,6 +28,7 @@
   --accent-blue: #3b82f6;
   --accent-blue-dim: rgba(59, 130, 246, 0.12);
   --accent-cyan: #22d3ee;
+  --accent-cyan-dim: rgba(34, 211, 238, 0.12);
   --radius: 8px;
   --radius-lg: 12px;
 }
@@ -126,6 +127,8 @@ body {
   animation: pulse-dot 2s infinite;
 }
 
+.status-dot.error { background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); }
+
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
@@ -137,6 +140,21 @@ body {
   color: var(--text-secondary);
 }
 
+/* ═══ DEMO BANNER ═══ */
+.demo-banner {
+  background: linear-gradient(90deg, rgba(255, 169, 64, 0.12), rgba(255, 169, 64, 0.05));
+  border-bottom: 1px solid rgba(255, 169, 64, 0.25);
+  padding: 6px 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--accent-amber);
+}
+
+.demo-banner svg { width: 14px; height: 14px; flex-shrink: 0; }
+.demo-banner .label { font-weight: 600; }
+
 /* ═══ MAIN LAYOUT ═══ */
 .main {
   display: grid;
@@ -144,16 +162,17 @@ body {
   min-height: calc(100vh - 56px);
 }
 
+.main.has-demo-banner { min-height: calc(100vh - 56px - 32px); }
+
 /* ═══ SIDEBAR ═══ */
 .sidebar {
   background: var(--bg-secondary);
   border-right: 1px solid var(--border);
   padding: 20px 0;
+  overflow-y: auto;
 }
 
-.sidebar-section {
-  margin-bottom: 24px;
-}
+.sidebar-section { margin-bottom: 24px; }
 
 .sidebar-label {
   font-size: 0.65rem;
@@ -189,7 +208,7 @@ body {
   background: var(--accent-green-dim);
 }
 
-.sidebar-item svg { width: 16px; height: 16px; opacity: 0.7; }
+.sidebar-item svg { width: 16px; height: 16px; opacity: 0.7; flex-shrink: 0; }
 
 .sidebar-badge {
   margin-left: auto;
@@ -225,6 +244,10 @@ body {
   font-size: 0.85rem;
   margin-top: 2px;
 }
+
+/* ═══ VIEW CONTAINERS ═══ */
+.view { display: none; }
+.view.active { display: block; animation: fadeSlideIn 0.3s ease; }
 
 /* ═══ STAT CARDS ROW ═══ */
 .stats-row {
@@ -272,6 +295,7 @@ body {
 .stat-card-icon.red { background: var(--accent-red-dim); color: var(--accent-red); }
 .stat-card-icon.amber { background: var(--accent-amber-dim); color: var(--accent-amber); }
 .stat-card-icon.blue { background: var(--accent-blue-dim); color: var(--accent-blue); }
+.stat-card-icon.cyan { background: var(--accent-cyan-dim); color: var(--accent-cyan); }
 
 .stat-card-value {
   font-size: 1.75rem;
@@ -302,6 +326,8 @@ body {
   overflow: hidden;
 }
 
+.panel-full { grid-column: 1 / -1; }
+
 .panel-header {
   display: flex;
   justify-content: space-between;
@@ -327,7 +353,18 @@ body {
   color: var(--accent-green);
 }
 
+.panel-badge.demo {
+  background: var(--accent-amber-dim);
+  color: var(--accent-amber);
+}
+
 .panel-body { padding: 20px; }
+
+.panel-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
 /* ═══ CHARTS ═══ */
 .chart-container {
@@ -362,7 +399,6 @@ canvas { width: 100% !important; height: 100% !important; }
 }
 
 .gauge-ring .bg { stroke: var(--border); }
-
 .gauge-ring .fg { transition: stroke-dashoffset 0.8s ease; }
 
 .gauge-value {
@@ -382,9 +418,7 @@ canvas { width: 100% !important; height: 100% !important; }
   font-weight: 500;
 }
 
-/* ═══ RULES TABLE ═══ */
-.rules-panel { grid-column: 1 / -1; }
-
+/* ═══ TABLES ═══ */
 .rules-toolbar {
   display: flex;
   gap: 10px;
@@ -407,7 +441,6 @@ canvas { width: 100% !important; height: 100% !important; }
 }
 
 .rules-search:focus { border-color: var(--accent-green); }
-
 .rules-search::placeholder { color: var(--text-dim); }
 
 .btn {
@@ -421,6 +454,7 @@ canvas { width: 100% !important; height: 100% !important; }
   cursor: pointer;
   transition: all 0.15s;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .btn:hover {
@@ -440,6 +474,19 @@ canvas { width: 100% !important; height: 100% !important; }
   border-color: #00cc8f;
   color: var(--bg-primary);
 }
+
+.btn-danger {
+  background: var(--accent-red-dim);
+  color: var(--accent-red);
+  border-color: rgba(255, 71, 87, 0.3);
+}
+
+.btn-danger:hover {
+  background: rgba(255, 71, 87, 0.25);
+  border-color: var(--accent-red);
+}
+
+.btn-sm { padding: 4px 10px; font-size: 0.72rem; }
 
 table {
   width: 100%;
@@ -541,11 +588,10 @@ tbody tr:hover { background: var(--bg-card-hover); }
   color: var(--accent-blue);
 }
 
-.net-node.bastion {
+.net-node.bastion-node {
   background: linear-gradient(135deg, var(--accent-green-dim), rgba(34, 211, 238, 0.1));
   border: 1px solid rgba(0, 229, 160, 0.3);
   color: var(--accent-green);
-  position: relative;
 }
 
 .net-node.internal {
@@ -561,16 +607,11 @@ tbody tr:hover { background: var(--bg-card-hover); }
   position: relative;
 }
 
-.net-pipe::before, .net-pipe::after {
+.net-pipe::after {
   content: '';
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  width: 0;
-  height: 0;
-}
-
-.net-pipe::after {
   bottom: -4px;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
@@ -587,6 +628,342 @@ tbody tr:hover { background: var(--bg-card-hover); }
 
 .net-rate .in { color: var(--accent-green); }
 .net-rate .out { color: var(--accent-amber); }
+
+/* ═══ INFO GRID ═══ */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px;
+  background: var(--bg-primary);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.info-item-label {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.info-item-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.status-card {
+  padding: 14px 16px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.status-card-label {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.status-card-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.status-card-detail {
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.note-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.note-item {
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.note-item strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.note-item.warn {
+  border-color: rgba(255, 169, 64, 0.3);
+  background: rgba(255, 169, 64, 0.08);
+}
+
+.note-item.danger {
+  border-color: rgba(255, 71, 87, 0.3);
+  background: rgba(255, 71, 87, 0.08);
+}
+
+/* ═══ PLUGIN CARDS ═══ */
+.plugin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.plugin-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+
+.plugin-card:hover { border-color: var(--border-active); }
+
+.plugin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.plugin-card-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.plugin-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.plugin-status.active {
+  background: var(--accent-green-dim);
+  color: var(--accent-green);
+}
+
+.plugin-status.inactive {
+  background: var(--bg-primary);
+  color: var(--text-dim);
+}
+
+.plugin-card-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.plugin-card-footer {
+  display: flex;
+  gap: 8px;
+}
+
+.plugin-routes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.route-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+}
+
+.route-chip strong {
+  color: var(--accent-cyan);
+  font-weight: 700;
+}
+
+.helper-copy {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* ═══ HOST LIST ═══ */
+.host-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(30, 42, 58, 0.5);
+  transition: background 0.1s;
+}
+
+.host-item:hover { background: var(--bg-card-hover); }
+.host-item:last-child { border-bottom: none; }
+
+.host-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-blue-dim);
+  color: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+.host-info { flex: 1; min-width: 0; }
+
+.host-name {
+  font-weight: 500;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.host-detail {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.host-connections {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ═══ INTERFACE CARDS ═══ */
+.iface-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.iface-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+
+.iface-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.iface-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.iface-status {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.iface-status.up { background: var(--accent-green-dim); color: var(--accent-green); }
+.iface-status.down { background: var(--accent-red-dim); color: var(--accent-red); }
+
+.iface-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.iface-stat {
+  padding: 8px;
+  background: var(--bg-primary);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.iface-stat-label {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.iface-stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+/* ═══ SESSION TABLE ═══ */
+.session-empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-dim);
+}
+
+.session-empty svg { width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.3; }
+.session-empty p { font-size: 0.85rem; margin-top: 8px; }
+
+/* ═══ LOADING / ERROR ═══ */
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent-green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-message {
+  padding: 12px 16px;
+  background: var(--accent-red-dim);
+  border: 1px solid rgba(255, 71, 87, 0.3);
+  border-radius: var(--radius);
+  color: var(--accent-red);
+  font-size: 0.82rem;
+  margin-bottom: 16px;
+}
 
 /* ═══ RESPONSIVE ═══ */
 @media (max-width: 1200px) {
@@ -611,7 +988,7 @@ tbody tr:hover { background: var(--bg-card-hover); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.stat-card, .panel { animation: fadeSlideIn 0.4s ease both; }
+.stat-card, .panel, .plugin-card, .iface-card { animation: fadeSlideIn 0.4s ease both; }
 .stat-card:nth-child(2), .panel:nth-child(2) { animation-delay: 0.05s; }
 .stat-card:nth-child(3), .panel:nth-child(3) { animation-delay: 0.1s; }
 .stat-card:nth-child(4), .panel:nth-child(4) { animation-delay: 0.15s; }
@@ -623,352 +1000,864 @@ tbody tr:hover { background: var(--bg-card-hover); }
 <div class="topbar">
   <div class="topbar-brand">
     <div class="topbar-logo">B</div>
-    <div class="topbar-title">Bastion <span>v0.1.0</span></div>
+    <div class="topbar-title">Bastion <span id="version-label">v0.2.0</span></div>
   </div>
-  <div class="topbar-nav">
-    <button class="active">Dashboard</button>
-    <button>Rules</button>
-    <button>Sessions</button>
-    <button>Plugins</button>
-    <button>Config</button>
+  <div class="topbar-nav" id="topNav">
+    <button class="active" data-view="dashboard">Dashboard</button>
+    <button data-view="rules">Rules</button>
+    <button data-view="sessions">Sessions</button>
+    <button data-view="plugins">Plugins</button>
+    <button data-view="config">Config</button>
   </div>
   <div class="topbar-status">
-    <div class="status-dot"></div>
-    <span class="status-label" id="uptime">uptime: 0d 0h 0m</span>
+    <div class="status-dot" id="statusDot"></div>
+    <span class="status-label" id="uptime">connecting...</span>
   </div>
 </div>
 
+{% if demo_mode %}
+<div class="demo-banner">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  <span class="label">DEMO MODE</span>
+  <span>All data is simulated. Firewall rules are validated but not applied to the system.</span>
+</div>
+{% endif %}
+
 <!-- ═══ MAIN ═══ -->
-<div class="main">
+<div class="main {% if demo_mode %}has-demo-banner{% endif %}">
 
   <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Monitoring</div>
-      <div class="sidebar-item active">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        Overview
-      </div>
-      <div class="sidebar-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Traffic
-      </div>
-      <div class="sidebar-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>
-        Hosts
-        <span class="sidebar-badge" id="host-count">0</span>
-      </div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Firewall</div>
-      <div class="sidebar-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Rules
-        <span class="sidebar-badge" id="rule-count">12</span>
-      </div>
-      <div class="sidebar-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="5" width="22" height="14" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-        Interfaces
-      </div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">System</div>
-      <div class="sidebar-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
-        Resources
-      </div>
-      <div class="sidebar-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
-        Plugins
-      </div>
-    </div>
-  </div>
+  <div class="sidebar" id="sidebar"></div>
 
-  <!-- CONTENT -->
-  <div class="content">
-    <div class="content-header">
-      <div>
-        <h1>Dashboard</h1>
-        <div class="content-header-sub">Real-time network gateway monitoring</div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn" onclick="refreshData()">↻ Refresh</button>
-        <button class="btn btn-primary" onclick="applyRules()">▶ Apply Rules</button>
-      </div>
-    </div>
+  <!-- CONTENT AREA -->
+  <div class="content" id="contentArea">
 
-    <!-- STAT CARDS -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <span class="stat-card-label">Active Sessions</span>
-          <div class="stat-card-icon green">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          </div>
+    <!-- ═══════ DASHBOARD VIEW ═══════ -->
+    <div class="view active" id="view-dashboard">
+      <div class="content-header">
+        <div>
+          <h1>Dashboard</h1>
+          <div class="content-header-sub">Real-time network gateway monitoring</div>
         </div>
-        <div class="stat-card-value" id="active-sessions">—</div>
-        <div class="stat-card-detail" id="total-connections">0 total connections</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <span class="stat-card-label">Throughput In</span>
-          <div class="stat-card-icon blue">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-          </div>
-        </div>
-        <div class="stat-card-value" id="throughput-in">—</div>
-        <div class="stat-card-detail" id="throughput-in-detail">bytes/sec</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <span class="stat-card-label">Throughput Out</span>
-          <div class="stat-card-icon amber">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-          </div>
-        </div>
-        <div class="stat-card-value" id="throughput-out">—</div>
-        <div class="stat-card-detail" id="throughput-out-detail">bytes/sec</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-header">
-          <span class="stat-card-label">Firewall Rules</span>
-          <div class="stat-card-icon red">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-        </div>
-        <div class="stat-card-value" id="fw-rules">12</div>
-        <div class="stat-card-detail">10 enabled · 2 disabled</div>
-      </div>
-    </div>
-
-    <!-- CHARTS + GAUGES ROW -->
-    <div class="panels-grid">
-
-      <!-- Throughput Chart -->
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Network Throughput</span>
-          <span class="panel-badge live">● LIVE</span>
-        </div>
-        <div class="panel-body">
-          <div class="chart-container">
-            <canvas id="throughputChart"></canvas>
-          </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="fetchDashboardData()">&#8635; Refresh</button>
         </div>
       </div>
 
-      <!-- System Resources -->
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">System Resources</span>
-          <span class="panel-badge live">● LIVE</span>
-        </div>
-        <div class="panel-body">
-          <div class="gauges-row">
-            <div class="gauge-item">
-              <div class="gauge-ring">
-                <svg width="100" height="100" viewBox="0 0 100 100">
-                  <circle class="bg" cx="50" cy="50" r="42"/>
-                  <circle class="fg" cx="50" cy="50" r="42" stroke="var(--accent-green)"
-                    stroke-dasharray="264" stroke-dashoffset="264" id="cpu-gauge"/>
-                </svg>
-                <div class="gauge-value" id="cpu-val">0%</div>
-              </div>
-              <div class="gauge-label">CPU</div>
-            </div>
-            <div class="gauge-item">
-              <div class="gauge-ring">
-                <svg width="100" height="100" viewBox="0 0 100 100">
-                  <circle class="bg" cx="50" cy="50" r="42"/>
-                  <circle class="fg" cx="50" cy="50" r="42" stroke="var(--accent-cyan)"
-                    stroke-dasharray="264" stroke-dashoffset="264" id="mem-gauge"/>
-                </svg>
-                <div class="gauge-value" id="mem-val">0%</div>
-              </div>
-              <div class="gauge-label">Memory</div>
-            </div>
-            <div class="gauge-item">
-              <div class="gauge-ring">
-                <svg width="100" height="100" viewBox="0 0 100 100">
-                  <circle class="bg" cx="50" cy="50" r="42"/>
-                  <circle class="fg" cx="50" cy="50" r="42" stroke="var(--accent-amber)"
-                    stroke-dasharray="264" stroke-dashoffset="264" id="disk-gauge"/>
-                </svg>
-                <div class="gauge-value" id="disk-val">0%</div>
-              </div>
-              <div class="gauge-label">Disk</div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Active Sessions</span>
+            <div class="stat-card-icon green">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             </div>
           </div>
+          <div class="stat-card-value" id="active-sessions">&mdash;</div>
+          <div class="stat-card-detail" id="total-connections">0 total connections</div>
         </div>
-      </div>
-
-      <!-- Network Layout -->
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Network Layout</span>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Throughput In</span>
+            <div class="stat-card-icon blue">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+            </div>
+          </div>
+          <div class="stat-card-value" id="throughput-in">&mdash;</div>
+          <div class="stat-card-detail" id="throughput-in-detail">bytes/sec</div>
         </div>
-        <div class="panel-body">
-          <div class="network-layout">
-            <div class="net-node external">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-              External (WAN)
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Throughput Out</span>
+            <div class="stat-card-icon amber">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
             </div>
-            <div class="net-pipe"></div>
-            <div class="net-rate">
-              <span class="in">↓ <span id="net-in-rate">0 KB/s</span></span>
-              <span class="out">↑ <span id="net-out-rate">0 KB/s</span></span>
-            </div>
-            <div class="net-pipe"></div>
-            <div class="net-node bastion">
+          </div>
+          <div class="stat-card-value" id="throughput-out">&mdash;</div>
+          <div class="stat-card-detail" id="throughput-out-detail">bytes/sec</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Firewall Rules</span>
+            <div class="stat-card-icon red">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Bastion Gateway
             </div>
-            <div class="net-pipe"></div>
-            <div class="net-rate">
-              <span class="in">↓ <span id="net-lan-in">0 KB/s</span></span>
-              <span class="out">↑ <span id="net-lan-out">0 KB/s</span></span>
+          </div>
+          <div class="stat-card-value" id="fw-rules">&mdash;</div>
+          <div class="stat-card-detail" id="fw-rules-detail">loading...</div>
+        </div>
+      </div>
+
+      <div class="panels-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Network Throughput</span>
+            <span class="panel-badge live">&#9679; LIVE</span>
+          </div>
+          <div class="panel-body">
+            <div class="chart-container"><canvas id="throughputChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">System Resources</span>
+            <span class="panel-badge live">&#9679; LIVE</span>
+          </div>
+          <div class="panel-body">
+            <div class="gauges-row">
+              <div class="gauge-item">
+                <div class="gauge-ring">
+                  <svg width="100" height="100" viewBox="0 0 100 100">
+                    <circle class="bg" cx="50" cy="50" r="42"/>
+                    <circle class="fg" cx="50" cy="50" r="42" stroke="var(--accent-green)"
+                      stroke-dasharray="264" stroke-dashoffset="264" id="cpu-gauge"/>
+                  </svg>
+                  <div class="gauge-value" id="cpu-val">0%</div>
+                </div>
+                <div class="gauge-label">CPU</div>
+              </div>
+              <div class="gauge-item">
+                <div class="gauge-ring">
+                  <svg width="100" height="100" viewBox="0 0 100 100">
+                    <circle class="bg" cx="50" cy="50" r="42"/>
+                    <circle class="fg" cx="50" cy="50" r="42" stroke="var(--accent-cyan)"
+                      stroke-dasharray="264" stroke-dashoffset="264" id="mem-gauge"/>
+                  </svg>
+                  <div class="gauge-value" id="mem-val">0%</div>
+                </div>
+                <div class="gauge-label">Memory</div>
+              </div>
+              <div class="gauge-item">
+                <div class="gauge-ring">
+                  <svg width="100" height="100" viewBox="0 0 100 100">
+                    <circle class="bg" cx="50" cy="50" r="42"/>
+                    <circle class="fg" cx="50" cy="50" r="42" stroke="var(--accent-amber)"
+                      stroke-dasharray="264" stroke-dashoffset="264" id="disk-gauge"/>
+                  </svg>
+                  <div class="gauge-value" id="disk-val">0%</div>
+                </div>
+                <div class="gauge-label">Disk</div>
+              </div>
             </div>
-            <div class="net-pipe"></div>
-            <div class="net-node internal">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/><line x1="14" y1="10" x2="14" y2="14"/><line x1="18" y1="10" x2="18" y2="14"/></svg>
-              Internal (LAN)
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Network Layout</span>
+          </div>
+          <div class="panel-body">
+            <div class="network-layout">
+              <div class="net-node external">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                External (WAN)
+              </div>
+              <div class="net-pipe"></div>
+              <div class="net-rate">
+                <span class="in">&#8595; <span id="net-in-rate">0 KB/s</span></span>
+                <span class="out">&#8593; <span id="net-out-rate">0 KB/s</span></span>
+              </div>
+              <div class="net-pipe"></div>
+              <div class="net-node bastion-node">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Bastion Gateway
+              </div>
+              <div class="net-pipe"></div>
+              <div class="net-rate">
+                <span class="in">&#8595; <span id="net-lan-in">0 KB/s</span></span>
+                <span class="out">&#8593; <span id="net-lan-out">0 KB/s</span></span>
+              </div>
+              <div class="net-pipe"></div>
+              <div class="net-node internal">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/><line x1="14" y1="10" x2="14" y2="14"/><line x1="18" y1="10" x2="18" y2="14"/></svg>
+                Internal (LAN)
+              </div>
             </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">CPU History</span>
+            <span class="panel-badge live">&#9679; LIVE</span>
+          </div>
+          <div class="panel-body">
+            <div class="chart-container"><canvas id="cpuChart"></canvas></div>
           </div>
         </div>
       </div>
 
-      <!-- CPU History Chart -->
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">CPU History</span>
-          <span class="panel-badge live">● LIVE</span>
+      <div class="panels-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Control Plane</span>
+            <span class="panel-badge" style="background:var(--bg-primary);color:var(--text-dim)">operator view</span>
+          </div>
+          <div class="panel-body">
+            <div class="status-grid" id="controlPlaneGrid">
+              <div class="status-card">
+                <div class="status-card-label">Loading</div>
+                <div class="status-card-value">&mdash;</div>
+                <div class="status-card-detail">Fetching runtime status</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="panel-body">
-          <div class="chart-container">
-            <canvas id="cpuChart"></canvas>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Operator Notes</span>
+            <span class="panel-badge demo">honest UX</span>
+          </div>
+          <div class="panel-body">
+            <div class="note-list" id="operatorNotice">
+              <div class="note-item">Loading deployment notes...</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- FIREWALL RULES TABLE -->
-    <div class="panel rules-panel">
-      <div class="panel-header">
-        <span class="panel-title">Firewall Rules</span>
-        <span class="panel-badge" style="background:var(--bg-primary);color:var(--text-dim)">nftables</span>
+    <!-- ═══════ TRAFFIC VIEW ═══════ -->
+    <div class="view" id="view-traffic">
+      <div class="content-header">
+        <div>
+          <h1>Traffic Monitor</h1>
+          <div class="content-header-sub">Network throughput and bandwidth analysis</div>
+        </div>
+        <button class="btn" onclick="fetchDashboardData()">&#8635; Refresh</button>
       </div>
-      <div class="rules-toolbar">
-        <input type="text" class="rules-search" placeholder="Search rules..." id="ruleSearch">
-        <button class="btn">Filter ▾</button>
-        <button class="btn btn-primary">+ Add Rule</button>
+      <div class="stats-row" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Inbound</span>
+            <div class="stat-card-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></div>
+          </div>
+          <div class="stat-card-value" id="traffic-in">&mdash;</div>
+          <div class="stat-card-detail">current rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Outbound</span>
+            <div class="stat-card-icon amber"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></div>
+          </div>
+          <div class="stat-card-value" id="traffic-out">&mdash;</div>
+          <div class="stat-card-detail">current rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Connections</span>
+            <div class="stat-card-icon cyan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          </div>
+          <div class="stat-card-value" id="traffic-conns">&mdash;</div>
+          <div class="stat-card-detail">active sessions</div>
+        </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>State</th>
-            <th>Priority</th>
-            <th>Name</th>
-            <th>Direction</th>
-            <th>Protocol</th>
-            <th>Source</th>
-            <th>Dest Port</th>
-            <th>Action</th>
-            <th>Group</th>
-          </tr>
-        </thead>
-        <tbody id="rulesBody"></tbody>
-      </table>
+      <div class="panel panel-full" style="margin-bottom:24px">
+        <div class="panel-header">
+          <span class="panel-title">Throughput Over Time</span>
+          <span class="panel-badge live">&#9679; LIVE</span>
+        </div>
+        <div class="panel-body">
+          <div class="chart-container" style="height:280px"><canvas id="trafficFullChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ HOSTS VIEW ═══════ -->
+    <div class="view" id="view-hosts">
+      <div class="content-header">
+        <div>
+          <h1>Discovered Hosts</h1>
+          <div class="content-header-sub">Hosts detected via ARP and active connections</div>
+        </div>
+        <button class="btn" onclick="fetchHosts()">&#8635; Refresh</button>
+      </div>
+      <div class="panel panel-full">
+        <div class="panel-header">
+          <span class="panel-title">Host List</span>
+          <span class="panel-badge" id="hosts-total-badge" style="background:var(--bg-primary);color:var(--text-dim)">0 hosts</span>
+        </div>
+        <div id="hostListBody"></div>
+      </div>
+    </div>
+
+    <!-- ═══════ RULES VIEW ═══════ -->
+    <div class="view" id="view-rules">
+      <div class="content-header">
+        <div>
+          <h1>Firewall Rules</h1>
+          <div class="content-header-sub">Manage nftables-based firewall policy</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="fetchRules()">&#8635; Refresh</button>
+          <button class="btn" onclick="validateRules()">&#10003; Validate</button>
+          <button class="btn btn-primary" onclick="applyRules()">&#9654; Apply Rules</button>
+        </div>
+      </div>
+      <div id="rules-alert"></div>
+      <div class="panel panel-full">
+        <div class="panel-header">
+          <span class="panel-title">Rule Set</span>
+          <span class="panel-badge" id="rules-badge" style="background:var(--bg-primary);color:var(--text-dim)">nftables</span>
+        </div>
+        <div class="rules-toolbar">
+          <input type="text" class="rules-search" placeholder="Search rules by name, protocol, tag..." id="ruleSearch">
+          <button class="btn" onclick="rollbackRules()">&#8634; Rollback</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>State</th>
+              <th>Priority</th>
+              <th>Name</th>
+              <th>Direction</th>
+              <th>Protocol</th>
+              <th>Source</th>
+              <th>Dest Port</th>
+              <th>Action</th>
+              <th>Tags</th>
+            </tr>
+          </thead>
+          <tbody id="rulesBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════ INTERFACES VIEW ═══════ -->
+    <div class="view" id="view-interfaces">
+      <div class="content-header">
+        <div>
+          <h1>Network Interfaces</h1>
+          <div class="content-header-sub">Interface status and traffic counters</div>
+        </div>
+        <button class="btn" onclick="fetchDashboardData()">&#8635; Refresh</button>
+      </div>
+      <div class="iface-grid" id="ifaceGrid"></div>
+    </div>
+
+    <!-- ═══════ RESOURCES VIEW ═══════ -->
+    <div class="view" id="view-resources">
+      <div class="content-header">
+        <div>
+          <h1>System Resources</h1>
+          <div class="content-header-sub">CPU, memory, and disk utilization</div>
+        </div>
+        <button class="btn" onclick="fetchDashboardData()">&#8635; Refresh</button>
+      </div>
+      <div class="stats-row" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">CPU Usage</span>
+            <div class="stat-card-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg></div>
+          </div>
+          <div class="stat-card-value" id="res-cpu">&mdash;</div>
+          <div class="stat-card-detail" id="res-cpu-detail">0 cores</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Memory</span>
+            <div class="stat-card-icon cyan"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="14"/><line x1="10" y1="10" x2="10" y2="14"/></svg></div>
+          </div>
+          <div class="stat-card-value" id="res-mem">&mdash;</div>
+          <div class="stat-card-detail" id="res-mem-detail">0 / 0 GB</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Disk</span>
+            <div class="stat-card-icon amber"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+          </div>
+          <div class="stat-card-value" id="res-disk">&mdash;</div>
+          <div class="stat-card-detail" id="res-disk-detail">0 / 0 GB</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-label">Uptime</span>
+            <div class="stat-card-icon blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          </div>
+          <div class="stat-card-value" id="res-uptime">&mdash;</div>
+          <div class="stat-card-detail">system uptime</div>
+        </div>
+      </div>
+      <div class="panels-grid">
+        <div class="panel panel-full">
+          <div class="panel-header">
+            <span class="panel-title">CPU History</span>
+            <span class="panel-badge live">&#9679; LIVE</span>
+          </div>
+          <div class="panel-body">
+            <div class="chart-container" style="height:220px"><canvas id="resCpuChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ SESSIONS VIEW ═══════ -->
+    <div class="view" id="view-sessions">
+      <div class="content-header">
+        <div>
+          <h1>Active Sessions</h1>
+          <div class="content-header-sub">Established network connections</div>
+        </div>
+        <button class="btn" onclick="fetchSessions()">&#8635; Refresh</button>
+      </div>
+      <div class="panel panel-full">
+        <div class="panel-header">
+          <span class="panel-title">Session Table</span>
+          <span class="panel-badge" id="session-count-badge" style="background:var(--bg-primary);color:var(--text-dim)">0 sessions</span>
+        </div>
+        <div class="panel-body" style="padding-bottom:0">
+          <div class="note-list" id="sessionNotice"></div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Local Address</th>
+              <th>Remote Address</th>
+              <th>Status</th>
+              <th>PID</th>
+            </tr>
+          </thead>
+          <tbody id="sessionsBody">
+            <tr><td colspan="4" class="session-empty"><p>Loading sessions...</p></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════ PLUGINS VIEW ═══════ -->
+    <div class="view" id="view-plugins">
+      <div class="content-header">
+        <div>
+          <h1>Plugins</h1>
+          <div class="content-header-sub">Manage Bastion plugin modules</div>
+        </div>
+        <button class="btn" onclick="fetchPlugins()">&#8635; Refresh</button>
+      </div>
+      <div class="panel panel-full" style="margin-bottom:24px">
+        <div class="panel-header">
+          <span class="panel-title">Plugin Posture</span>
+          <span class="panel-badge" style="background:var(--bg-primary);color:var(--text-dim)">live inventory</span>
+        </div>
+        <div class="panel-body">
+          <div class="status-grid" id="pluginSummary">
+            <div class="status-card">
+              <div class="status-card-label">Loading</div>
+              <div class="status-card-value">&mdash;</div>
+              <div class="status-card-detail">Discovering plugins</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="plugin-grid" id="pluginGrid"></div>
+    </div>
+
+    <!-- ═══════ CONFIG VIEW ═══════ -->
+    <div class="view" id="view-config">
+      <div class="content-header">
+        <div>
+          <h1>System Configuration</h1>
+          <div class="content-header-sub">Runtime environment and version information</div>
+        </div>
+        <button class="btn" onclick="fetchSystemInfo()">&#8635; Refresh</button>
+      </div>
+      <div class="panels-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">System Information</span>
+          </div>
+          <div class="panel-body">
+            <div class="info-grid" id="sysInfoGrid">
+              <div class="info-item">
+                <div class="info-item-label">Loading</div>
+                <div class="info-item-value">&mdash;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">API Endpoints</span>
+          </div>
+          <div class="panel-body">
+            <div style="font-size:0.82rem;color:var(--text-secondary);line-height:1.8">
+              <div class="mono" style="margin-bottom:8px;color:var(--text-dim)">Base: /api/v1</div>
+              <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/rules</span></div>
+              <div><span style="color:var(--accent-blue)">POST</span> <span class="mono">/rules</span></div>
+              <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/monitor/stats</span></div>
+              <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/monitor/hosts</span></div>
+              <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/monitor/sessions</span></div>
+              <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/plugins</span></div>
+              <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/system/info</span></div>
+              <div><span style="color:var(--accent-blue)">POST</span> <span class="mono">/rules/apply</span></div>
+              <div><span style="color:var(--accent-blue)">POST</span> <span class="mono">/rules/rollback</span></div>
+              <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/rules/validate</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Deployment Guardrails</span>
+          </div>
+          <div class="panel-body">
+            <div class="note-list" id="guardrailList">
+              <div class="note-item danger"><strong>Authentication:</strong> not implemented yet. Keep Bastion behind a trusted network boundary or authenticated reverse proxy.</div>
+              <div class="note-item warn"><strong>Secret management:</strong> `BASTION_SECRET_KEY` must come from the environment for non-demo runs.</div>
+              <div class="note-item"><strong>Firewall mode:</strong> demo mode validates and renders rules without changing the host firewall.</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
 </div>
 
 <script>
-// ═══ DEMO DATA ═══
-const DEMO_RULES = [
-  { state:'enabled', priority:10, name:'Allow established', direction:'inbound', protocol:'any', source:'*', dest_port:'*', action:'accept', group:'base', tags:['base','essential'] },
-  { state:'enabled', priority:11, name:'Allow loopback', direction:'inbound', protocol:'any', source:'lo', dest_port:'*', action:'accept', group:'base', tags:['base'] },
-  { state:'enabled', priority:20, name:'Allow ICMP', direction:'inbound', protocol:'icmp', source:'*', dest_port:'*', action:'accept', group:'base', tags:['diagnostics'] },
-  { state:'enabled', priority:50, name:'Allow SSH', direction:'inbound', protocol:'tcp', source:'10.0.0.0/8', dest_port:'22', action:'accept', group:'management', tags:['ssh'] },
-  { state:'enabled', priority:51, name:'Allow Dashboard', direction:'inbound', protocol:'tcp', source:'10.0.0.0/8', dest_port:'8443', action:'accept', group:'management', tags:['dashboard'] },
-  { state:'enabled', priority:100, name:'Allow HTTP', direction:'inbound', protocol:'tcp', source:'*', dest_port:'80', action:'accept', group:'web_services', tags:['web'] },
-  { state:'enabled', priority:101, name:'Allow HTTPS', direction:'inbound', protocol:'tcp', source:'*', dest_port:'443', action:'accept', group:'web_services', tags:['web','tls'] },
-  { state:'enabled', priority:110, name:'Allow DNS (TCP)', direction:'inbound', protocol:'tcp', source:'*', dest_port:'53', action:'accept', group:'network_services', tags:['dns'] },
-  { state:'enabled', priority:111, name:'Allow DNS (UDP)', direction:'inbound', protocol:'udp', source:'*', dest_port:'53', action:'accept', group:'network_services', tags:['dns'] },
-  { state:'disabled', priority:900, name:'Rate limit connections', direction:'inbound', protocol:'tcp', source:'*', dest_port:'*', action:'drop', group:'protection', tags:['rate_limit'] },
-  { state:'enabled', priority:100, name:'Allow LAN → WAN', direction:'forward', protocol:'any', source:'192.168.1.0/24', dest_port:'*', action:'accept', group:'routing', tags:['nat'] },
-  { state:'enabled', priority:999, name:'Drop all (default)', direction:'inbound', protocol:'any', source:'*', dest_port:'*', action:'drop', group:'base', tags:['default'] },
-];
+// ═══ STATE ═══
+const DEMO_MODE = {{ 'true' if demo_mode else 'false' }};
+let currentView = 'dashboard';
+let currentSidebar = 'overview';
+let cachedStats = null;
+let cachedSystemInfo = null;
+let cachedPlugins = [];
+let allRules = [];
+let lastRefreshLabel = 'never';
 
-function renderRules(rules) {
-  const tbody = document.getElementById('rulesBody');
-  tbody.innerHTML = rules.map(r => `
-    <tr>
-      <td><span class="rule-state"><span class="rule-state-dot ${r.state}"></span>${r.state}</span></td>
-      <td class="mono">${r.priority}</td>
-      <td style="font-weight:500">${r.name}</td>
-      <td class="mono">${r.direction}</td>
-      <td class="mono">${r.protocol}</td>
-      <td class="mono">${r.source}</td>
-      <td class="mono">${r.dest_port}</td>
-      <td><span class="rule-action action-${r.action}">${r.action}</span></td>
-      <td>${r.tags.map(t=>`<span class="rule-tag">${t}</span>`).join('')}</td>
-    </tr>
-  `).join('');
+const throughputInHistory = Array(60).fill(0);
+const throughputOutHistory = Array(60).fill(0);
+const cpuHistory = Array(60).fill(0);
+let pollTimer = null;
+let apiOk = false;
+const VIEW_HASH_ALIASES = { overview: 'dashboard' };
+
+// ═══ SIDEBAR DEFINITIONS ═══
+const SIDEBAR_CONFIG = {
+  dashboard: [
+    { section: 'Monitoring', items: [
+      { id: 'overview', label: 'Overview', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>' },
+      { id: 'traffic', label: 'Traffic', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>' },
+      { id: 'hosts', label: 'Hosts', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/></svg>', badgeId: 'sb-host-count' },
+    ]},
+    { section: 'Firewall', items: [
+      { id: 'rules', label: 'Rules', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', badgeId: 'sb-rule-count' },
+      { id: 'interfaces', label: 'Interfaces', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="5" width="22" height="14" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>' },
+    ]},
+    { section: 'System', items: [
+      { id: 'resources', label: 'Resources', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>' },
+      { id: 'plugins', label: 'Plugins', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>' },
+    ]},
+  ],
+  rules: [
+    { section: 'Firewall', items: [
+      { id: 'rules', label: 'All Rules', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>', badgeId: 'sb2-rule-count' },
+    ]},
+  ],
+  sessions: [
+    { section: 'Connections', items: [
+      { id: 'sessions', label: 'Active Sessions', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>' },
+    ]},
+  ],
+  plugins: [
+    { section: 'Extensions', items: [
+      { id: 'plugins', label: 'All Plugins', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>' },
+    ]},
+  ],
+  config: [
+    { section: 'Settings', items: [
+      { id: 'config', label: 'System Info', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>' },
+    ]},
+  ],
+};
+
+// Maps sidebar item → view id. Most map 1:1 except 'overview' → 'dashboard'
+const SIDEBAR_VIEW_MAP = { overview: 'dashboard' };
+
+// ═══ NAVIGATION ═══
+function resolveViewFromHash(hashValue) {
+  const raw = (hashValue || '').replace(/^#/, '').trim();
+  if (!raw) return { view: 'dashboard', sidebar: 'overview' };
+  const view = VIEW_HASH_ALIASES[raw] || raw;
+  const valid = document.getElementById('view-' + view) ? view : 'dashboard';
+  return { view: valid, sidebar: raw || valid };
 }
 
-renderRules(DEMO_RULES);
+function updateHash(viewId, sidebarId) {
+  const next = sidebarId || viewId;
+  if (window.location.hash !== '#' + next) {
+    history.replaceState(null, '', '#' + next);
+  }
+}
 
-document.getElementById('ruleSearch').addEventListener('input', function(e) {
-  const q = e.target.value.toLowerCase();
-  const filtered = DEMO_RULES.filter(r =>
-    r.name.toLowerCase().includes(q) ||
-    r.protocol.includes(q) ||
-    r.tags.some(t => t.includes(q)) ||
-    r.group.includes(q)
-  );
-  renderRules(filtered);
+function renderSidebar(topView) {
+  const sb = document.getElementById('sidebar');
+  const config = SIDEBAR_CONFIG[topView] || SIDEBAR_CONFIG.dashboard;
+  let html = '';
+  config.forEach(sec => {
+    html += `<div class="sidebar-section"><div class="sidebar-label">${sec.section}</div>`;
+    sec.items.forEach(item => {
+      const viewId = SIDEBAR_VIEW_MAP[item.id] || item.id;
+      const active = (viewId === currentView || (currentView === 'dashboard' && item.id === 'overview')) ? ' active' : '';
+      const badge = item.badgeId ? `<span class="sidebar-badge" id="${item.badgeId}">0</span>` : '';
+      html += `<div class="sidebar-item${active}" data-sidebar="${item.id}">${item.icon} ${item.label} ${badge}</div>`;
+    });
+    html += '</div>';
+  });
+  sb.innerHTML = html;
+
+  sb.querySelectorAll('.sidebar-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.sidebar;
+      const viewId = SIDEBAR_VIEW_MAP[id] || id;
+      switchView(viewId, id);
+    });
+  });
+}
+
+function switchView(viewId, sidebarId, syncHash = true) {
+  // Update view visibility
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById('view-' + viewId);
+  if (target) target.classList.add('active');
+  currentView = viewId;
+  currentSidebar = sidebarId || viewId;
+
+  // Determine which top-nav tab this belongs to
+  let topTab = viewId;
+  if (['dashboard', 'traffic', 'hosts', 'interfaces', 'resources'].includes(viewId)) topTab = 'dashboard';
+
+  // Update top nav
+  document.querySelectorAll('#topNav button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.view === topTab);
+  });
+
+  // Update sidebar
+  renderSidebar(topTab);
+
+  if (syncHash) {
+    updateHash(viewId, sidebarId);
+  }
+
+  // Fetch data for the view
+  onViewEnter(viewId);
+}
+
+// Top nav click handler
+document.querySelectorAll('#topNav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const view = btn.dataset.view;
+    // Each top tab has a default sub-view
+    const defaults = {
+      dashboard: { view: 'dashboard', sidebar: 'overview' },
+      rules: { view: 'rules', sidebar: 'rules' },
+      sessions: { view: 'sessions', sidebar: 'sessions' },
+      plugins: { view: 'plugins', sidebar: 'plugins' },
+      config: { view: 'config', sidebar: 'config' },
+    };
+    const next = defaults[view] || { view, sidebar: view };
+    switchView(next.view, next.sidebar);
+  });
 });
 
-// ═══ SIMULATED LIVE DATA ═══
-const MAX_POINTS = 60;
-const throughputIn = Array(MAX_POINTS).fill(0);
-const throughputOut = Array(MAX_POINTS).fill(0);
-const cpuHistory = Array(MAX_POINTS).fill(0);
-const labels = Array(MAX_POINTS).fill('');
+function onViewEnter(viewId) {
+  switch (viewId) {
+    case 'dashboard': fetchDashboardData(); break;
+    case 'traffic': fetchDashboardData(); break;
+    case 'hosts': fetchHosts(); break;
+    case 'rules': fetchRules(); break;
+    case 'interfaces': fetchDashboardData(); break;
+    case 'resources': fetchDashboardData(); break;
+    case 'sessions': renderSessionNotice(); fetchSessions(); break;
+    case 'plugins': fetchPlugins(); break;
+    case 'config': fetchSystemInfo(); break;
+  }
+}
 
-function formatBytes(bytes) {
+// ═══ API HELPERS ═══
+async function apiFetch(path) {
+  try {
+    const resp = await fetch('/api/v1' + path);
+    const data = await resp.json();
+    if (!apiOk) {
+      apiOk = true;
+      document.getElementById('statusDot').classList.remove('error');
+    }
+    return data;
+  } catch (e) {
+    apiOk = false;
+    document.getElementById('statusDot').classList.add('error');
+    document.getElementById('uptime').textContent = 'connection lost';
+    throw e;
+  }
+}
+
+async function apiPost(path, payload = null) {
+  try {
+    const options = { method: 'POST', headers: {} };
+    if (payload !== null) {
+      options.headers['Content-Type'] = 'application/json';
+      options.body = JSON.stringify(payload);
+    }
+    const resp = await fetch('/api/v1' + path, options);
+    return await resp.json();
+  } catch (e) {
+    apiOk = false;
+    throw e;
+  }
+}
+
+// ═══ FORMATTERS ═══
+function fmtBytes(bytes) {
   if (bytes < 1024) return bytes.toFixed(0) + ' B/s';
   if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB/s';
   return (bytes / 1048576).toFixed(2) + ' MB/s';
 }
 
-function formatUptime(seconds) {
+function fmtSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+  return (bytes / 1073741824).toFixed(1) + ' GB';
+}
+
+function fmtUptime(seconds) {
   const d = Math.floor(seconds / 86400);
   const h = Math.floor((seconds % 86400) / 3600);
   const m = Math.floor((seconds % 3600) / 60);
-  return `uptime: ${d}d ${h}h ${m}m`;
+  return `${d}d ${h}h ${m}m`;
 }
 
-// Gauge updater
+function fmtUptimeLabel(seconds) {
+  return 'uptime: ' + fmtUptime(seconds);
+}
+
+function fmtClock(date = new Date()) {
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+function updateOperationalPanels() {
+  const controlGrid = document.getElementById('controlPlaneGrid');
+  const operatorNotice = document.getElementById('operatorNotice');
+  const pluginSummary = document.getElementById('pluginSummary');
+
+  if (controlGrid) {
+    const enabledPlugins = cachedPlugins.filter(p => p.state === 'enabled').length;
+    const firewallRules = allRules.length;
+    const activeSessions = cachedStats?.network?.active_sessions ?? '—';
+    const hostCount = cachedStats?.hosts?.total ?? '—';
+    const nftState = cachedSystemInfo?.nftables_available ? 'ready' : (DEMO_MODE ? 'simulated' : 'offline');
+
+    controlGrid.innerHTML = [
+      {
+        label: 'Mode',
+        value: DEMO_MODE ? 'demo' : 'live',
+        detail: DEMO_MODE ? 'Simulated telemetry and dry-run firewall apply.' : 'Operating against host services.',
+      },
+      {
+        label: 'API health',
+        value: apiOk ? 'online' : 'degraded',
+        detail: apiOk ? 'Dashboard data is flowing from the Flask API.' : 'Last request failed or is still connecting.',
+      },
+      {
+        label: 'Firewall backend',
+        value: nftState,
+        detail: `${firewallRules} tracked rules in control set.`,
+      },
+      {
+        label: 'Activity',
+        value: `${activeSessions} sessions`,
+        detail: `${hostCount} hosts observed. Last refresh ${lastRefreshLabel}.`,
+      },
+      {
+        label: 'Plugins',
+        value: `${enabledPlugins}/${cachedPlugins.length || 0}`,
+        detail: 'Enabled plugins over discoverable modules.',
+      },
+      {
+        label: 'Runtime',
+        value: cachedSystemInfo?.python || 'pending',
+        detail: cachedSystemInfo?.platform || 'Waiting for system metadata.',
+      },
+    ].map(item => `
+      <div class="status-card">
+        <div class="status-card-label">${item.label}</div>
+        <div class="status-card-value">${esc(item.value)}</div>
+        <div class="status-card-detail">${esc(item.detail)}</div>
+      </div>
+    `).join('');
+  }
+
+  if (operatorNotice) {
+    const notices = [];
+    if (DEMO_MODE) {
+      notices.push('<div class="note-item warn"><strong>Demo mode:</strong> throughput, host, and resource data are intentionally simulated so operators can evaluate the interface without touching the host firewall.</div>');
+    }
+    if (!DEMO_MODE && !cachedSystemInfo?.nftables_available) {
+      notices.push('<div class="note-item danger"><strong>Firewall backend unavailable:</strong> nftables is not reporting as available, so live rule application is not ready.</div>');
+    }
+    notices.push('<div class="note-item danger"><strong>Authentication:</strong> Bastion still has no built-in auth layer. Treat this UI as trusted-admin only until auth is implemented.</div>');
+    notices.push('<div class="note-item"><strong>Operator workflow:</strong> validate before apply, and use rollback if a policy change needs to be reverted quickly.</div>');
+    operatorNotice.innerHTML = notices.join('');
+  }
+
+  if (pluginSummary) {
+    const routeCount = cachedPlugins.reduce((total, plugin) => total + (plugin.routes?.length || 0), 0);
+    const errored = cachedPlugins.filter(plugin => plugin.state === 'error').length;
+    pluginSummary.innerHTML = [
+      { label: 'Discoverable', value: String(cachedPlugins.length || 0), detail: 'Plugins found by the runtime loader.' },
+      { label: 'Enabled', value: String(cachedPlugins.filter(plugin => plugin.state === 'enabled').length), detail: 'Modules currently active.' },
+      { label: 'API routes', value: String(routeCount), detail: 'Plugin-provided control plane endpoints.' },
+      { label: 'Errors', value: String(errored), detail: errored ? 'At least one plugin failed to load or enable.' : 'No plugin loader errors reported.' },
+    ].map(item => `
+      <div class="status-card">
+        <div class="status-card-label">${item.label}</div>
+        <div class="status-card-value">${esc(item.value)}</div>
+        <div class="status-card-detail">${esc(item.detail)}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function renderSessionNotice() {
+  const notice = document.getElementById('sessionNotice');
+  if (!notice) return;
+  const items = [];
+  if (DEMO_MODE) {
+    items.push('<div class="note-item warn"><strong>Demo mode:</strong> session values may be sparse or synthetic depending on the environment.</div>');
+  } else {
+    items.push('<div class="note-item"><strong>Live mode:</strong> session visibility depends on host permissions and what the platform can read from the network stack.</div>');
+  }
+  items.push('<div class="note-item"><strong>Purpose:</strong> this table is a situational view, not a full packet capture or forensic timeline.</div>');
+  notice.innerHTML = items.join('');
+}
+
+// ═══ GAUGE ═══
 function setGauge(id, percent, valId) {
+  const el = document.getElementById(id);
+  const valEl = document.getElementById(valId);
+  if (!el || !valEl) return;
   const circumference = 264;
   const offset = circumference - (circumference * percent / 100);
-  document.getElementById(id).setAttribute('stroke-dashoffset', offset);
-  document.getElementById(valId).textContent = Math.round(percent) + '%';
-
-  // Color shift for high usage
-  const el = document.getElementById(id);
+  el.setAttribute('stroke-dashoffset', offset);
+  valEl.textContent = Math.round(percent) + '%';
   if (percent > 80) el.setAttribute('stroke', 'var(--accent-red)');
   else if (percent > 60) el.setAttribute('stroke', 'var(--accent-amber)');
+  else el.setAttribute('stroke', el.dataset.defaultColor || 'var(--accent-green)');
 }
 
-// ═══ CANVAS CHARTS (minimal, no library) ═══
+// Store default colors
+document.querySelectorAll('.gauge-ring .fg').forEach(el => {
+  el.dataset.defaultColor = el.getAttribute('stroke');
+});
+
+// ═══ CANVAS CHARTS ═══
 function drawChart(canvasId, datasets, opts = {}) {
   const canvas = document.getElementById(canvasId);
+  if (!canvas || !canvas.parentElement) return;
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.parentElement.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) return;
   canvas.width = rect.width * dpr;
   canvas.height = rect.height * dpr;
   ctx.scale(dpr, dpr);
@@ -976,18 +1865,13 @@ function drawChart(canvasId, datasets, opts = {}) {
   const pad = { top: 10, right: 10, bottom: 20, left: 45 };
   const cW = W - pad.left - pad.right;
   const cH = H - pad.top - pad.bottom;
-
   ctx.clearRect(0, 0, W, H);
 
-  // Find max
   let maxVal = opts.maxY || 0;
-  datasets.forEach(ds => {
-    ds.data.forEach(v => { if (v > maxVal) maxVal = v; });
-  });
+  datasets.forEach(ds => { ds.data.forEach(v => { if (v > maxVal) maxVal = v; }); });
   if (maxVal === 0) maxVal = 100;
   maxVal *= 1.15;
 
-  // Grid lines
   ctx.strokeStyle = 'rgba(30,42,58,0.6)';
   ctx.lineWidth = 0.5;
   const gridLines = 4;
@@ -997,8 +1881,6 @@ function drawChart(canvasId, datasets, opts = {}) {
     ctx.moveTo(pad.left, y);
     ctx.lineTo(pad.left + cW, y);
     ctx.stroke();
-
-    // Labels
     const val = maxVal - (maxVal / gridLines) * i;
     ctx.fillStyle = '#4a5568';
     ctx.font = '10px JetBrains Mono, monospace';
@@ -1006,21 +1888,17 @@ function drawChart(canvasId, datasets, opts = {}) {
     ctx.fillText(opts.formatY ? opts.formatY(val) : Math.round(val), pad.left - 6, y + 3);
   }
 
-  // Draw datasets
   datasets.forEach(ds => {
     ctx.beginPath();
     const data = ds.data;
     for (let i = 0; i < data.length; i++) {
       const x = pad.left + (cW / (data.length - 1)) * i;
       const y = pad.top + cH - (data[i] / maxVal) * cH;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
     ctx.strokeStyle = ds.color;
     ctx.lineWidth = 1.5;
     ctx.stroke();
-
-    // Fill gradient
     const lastX = pad.left + cW;
     const bottomY = pad.top + cH;
     ctx.lineTo(lastX, bottomY);
@@ -1034,77 +1912,424 @@ function drawChart(canvasId, datasets, opts = {}) {
   });
 }
 
-// ═══ SIMULATION LOOP ═══
-let simTime = 0;
+// ═══ DATA FETCHERS ═══
 
-function simulate() {
-  simTime += 5;
+async function fetchDashboardData() {
+  try {
+    const resp = await apiFetch('/monitor/stats');
+    if (!resp.success) return;
+    const d = resp.data;
+    cachedStats = d;
+    lastRefreshLabel = fmtClock();
 
-  // Generate realistic-looking data
-  const baseIn = 45000 + Math.sin(simTime / 30) * 20000;
-  const baseOut = 12000 + Math.sin(simTime / 25) * 8000;
-  const noise = () => (Math.random() - 0.5) * 15000;
+    // Update stat cards
+    const el = id => document.getElementById(id);
+    el('active-sessions').textContent = d.network.active_sessions;
+    el('total-connections').textContent = d.network.total_connections + ' total connections';
+    el('throughput-in').textContent = fmtBytes(d.network.bytes_per_sec_in);
+    el('throughput-out').textContent = fmtBytes(d.network.bytes_per_sec_out);
+    el('uptime').textContent = fmtUptimeLabel(d.system.uptime);
 
-  const inVal = Math.max(0, baseIn + noise());
-  const outVal = Math.max(0, baseOut + noise());
+    // Gauges
+    setGauge('cpu-gauge', d.system.cpu_percent, 'cpu-val');
+    setGauge('mem-gauge', d.system.memory_percent, 'mem-val');
+    setGauge('disk-gauge', d.system.disk_percent, 'disk-val');
 
-  throughputIn.push(inVal);
-  throughputIn.shift();
-  throughputOut.push(outVal);
-  throughputOut.shift();
+    // Network rates
+    el('net-in-rate').textContent = fmtBytes(d.network.bytes_per_sec_in);
+    el('net-out-rate').textContent = fmtBytes(d.network.bytes_per_sec_out);
+    el('net-lan-in').textContent = fmtBytes(d.network.bytes_per_sec_in * 0.85);
+    el('net-lan-out').textContent = fmtBytes(d.network.bytes_per_sec_out * 0.92);
 
-  const cpu = 15 + Math.sin(simTime / 20) * 10 + Math.random() * 8;
-  cpuHistory.push(cpu);
-  cpuHistory.shift();
+    // Host badge
+    const sbHostCount = document.getElementById('sb-host-count');
+    if (sbHostCount) sbHostCount.textContent = d.hosts.total;
 
-  const mem = 38 + Math.sin(simTime / 60) * 5 + Math.random() * 3;
-  const disk = 42 + simTime * 0.001;
+    // Push history
+    throughputInHistory.push(d.network.bytes_per_sec_in);
+    throughputInHistory.shift();
+    throughputOutHistory.push(d.network.bytes_per_sec_out);
+    throughputOutHistory.shift();
+    cpuHistory.push(d.system.cpu_percent);
+    cpuHistory.shift();
 
-  // Update stat cards
-  const sessions = Math.floor(80 + Math.sin(simTime / 15) * 30 + Math.random() * 20);
-  const totalConn = sessions + Math.floor(Math.random() * 50) + 60;
-  document.getElementById('active-sessions').textContent = sessions;
-  document.getElementById('total-connections').textContent = totalConn + ' total connections';
-  document.getElementById('throughput-in').textContent = formatBytes(inVal);
-  document.getElementById('throughput-out').textContent = formatBytes(outVal);
-  document.getElementById('uptime').textContent = formatUptime(simTime + 3600 * 26);
+    // Charts (draw whichever are visible)
+    const fmtBytesChart = v => fmtBytes(v).replace('/s', '');
+    const fmtPct = v => Math.round(v) + '%';
 
-  // Update gauges
-  setGauge('cpu-gauge', cpu, 'cpu-val');
-  setGauge('mem-gauge', mem, 'mem-val');
-  setGauge('disk-gauge', Math.min(disk, 95), 'disk-val');
+    drawChart('throughputChart', [
+      { data: throughputInHistory, color: 'rgb(0, 229, 160)' },
+      { data: throughputOutHistory, color: 'rgb(255, 169, 64)' },
+    ], { formatY: fmtBytesChart });
 
-  // Update network layout rates
-  document.getElementById('net-in-rate').textContent = formatBytes(inVal);
-  document.getElementById('net-out-rate').textContent = formatBytes(outVal);
-  document.getElementById('net-lan-in').textContent = formatBytes(inVal * 0.85);
-  document.getElementById('net-lan-out').textContent = formatBytes(outVal * 0.92);
+    drawChart('cpuChart', [
+      { data: cpuHistory, color: 'rgb(59, 130, 246)' },
+    ], { maxY: 100, formatY: fmtPct });
 
-  // Update host count
-  document.getElementById('host-count').textContent = Math.floor(5 + Math.sin(simTime / 40) * 2);
+    drawChart('trafficFullChart', [
+      { data: throughputInHistory, color: 'rgb(0, 229, 160)' },
+      { data: throughputOutHistory, color: 'rgb(255, 169, 64)' },
+    ], { formatY: fmtBytesChart });
 
-  // Draw charts
-  drawChart('throughputChart', [
-    { data: throughputIn, color: 'rgb(0, 229, 160)' },
-    { data: throughputOut, color: 'rgb(255, 169, 64)' },
-  ], { formatY: v => formatBytes(v).replace('/s', '') });
+    drawChart('resCpuChart', [
+      { data: cpuHistory, color: 'rgb(59, 130, 246)' },
+    ], { maxY: 100, formatY: fmtPct });
 
-  drawChart('cpuChart', [
-    { data: cpuHistory, color: 'rgb(59, 130, 246)' },
-  ], { maxY: 100, formatY: v => Math.round(v) + '%' });
+    // Traffic view stat cards
+    el('traffic-in').textContent = fmtBytes(d.network.bytes_per_sec_in);
+    el('traffic-out').textContent = fmtBytes(d.network.bytes_per_sec_out);
+    el('traffic-conns').textContent = d.network.active_sessions;
+
+    // Resources view
+    el('res-cpu').textContent = Math.round(d.system.cpu_percent) + '%';
+    el('res-cpu-detail').textContent = d.system.cpu_count + ' cores';
+    el('res-mem').textContent = Math.round(d.system.memory_percent) + '%';
+    el('res-mem-detail').textContent = fmtSize(d.system.memory_used) + ' / ' + fmtSize(d.system.memory_total);
+    el('res-disk').textContent = Math.round(d.system.disk_percent) + '%';
+    el('res-disk-detail').textContent = fmtSize(d.system.disk_used) + ' / ' + fmtSize(d.system.disk_total);
+    el('res-uptime').textContent = fmtUptime(d.system.uptime);
+
+    // Interfaces view
+    renderInterfaces(d.network.interfaces);
+    updateOperationalPanels();
+
+  } catch (e) {
+    console.error('Failed to fetch dashboard data:', e);
+  }
 }
 
-// Initial render + interval
-simulate();
-setInterval(simulate, 2000);
-
-// Handle resize
-window.addEventListener('resize', simulate);
-
-function refreshData() { simulate(); }
-function applyRules() {
-  alert('Rules applied successfully (demo mode)');
+function renderInterfaces(ifaces) {
+  const grid = document.getElementById('ifaceGrid');
+  if (!grid) return;
+  if (!ifaces || Object.keys(ifaces).length === 0) {
+    grid.innerHTML = '<div class="session-empty"><p>No interface data available</p></div>';
+    return;
+  }
+  grid.innerHTML = Object.entries(ifaces).map(([name, iface]) => `
+    <div class="iface-card">
+      <div class="iface-header">
+        <span class="iface-name">${name}</span>
+        <span class="iface-status ${iface.is_up ? 'up' : 'down'}">${iface.is_up ? 'UP' : 'DOWN'}</span>
+      </div>
+      <div class="iface-stats">
+        <div class="iface-stat">
+          <div class="iface-stat-label">Sent</div>
+          <div class="iface-stat-value" style="color:var(--accent-amber)">${fmtSize(iface.bytes_sent)}</div>
+        </div>
+        <div class="iface-stat">
+          <div class="iface-stat-label">Received</div>
+          <div class="iface-stat-value" style="color:var(--accent-green)">${fmtSize(iface.bytes_recv)}</div>
+        </div>
+        <div class="iface-stat" style="grid-column:1/-1">
+          <div class="iface-stat-label">Speed</div>
+          <div class="iface-stat-value">${iface.speed_mbps ? iface.speed_mbps + ' Mbps' : 'N/A'}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
 }
+
+async function fetchRules() {
+  try {
+    const resp = await apiFetch('/rules');
+    if (!resp.success) return;
+    allRules = resp.data || [];
+    renderRules(allRules);
+    // Update badges
+    const enabled = allRules.filter(r => r.state === 'enabled').length;
+    const disabled = allRules.length - enabled;
+    const el = id => document.getElementById(id);
+    el('fw-rules').textContent = allRules.length;
+    el('fw-rules-detail').textContent = enabled + ' enabled \u00b7 ' + disabled + ' disabled';
+    el('rules-badge').textContent = allRules.length + ' rules';
+    const sbBadge = document.getElementById('sb-rule-count');
+    if (sbBadge) sbBadge.textContent = allRules.length;
+    const sb2Badge = document.getElementById('sb2-rule-count');
+    if (sb2Badge) sb2Badge.textContent = allRules.length;
+    updateOperationalPanels();
+  } catch (e) {
+    console.error('Failed to fetch rules:', e);
+  }
+}
+
+function renderRules(rules) {
+  const tbody = document.getElementById('rulesBody');
+  if (!tbody) return;
+  if (rules.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--text-dim)">No rules found</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rules.map(r => {
+    const state = r.state || 'enabled';
+    const action = r.action || 'accept';
+    const tags = (r.tags || []).map(t => `<span class="rule-tag">${esc(t)}</span>`).join('');
+    return `<tr>
+      <td><span class="rule-state"><span class="rule-state-dot ${esc(state)}"></span>${esc(state)}</span></td>
+      <td class="mono">${r.priority != null ? r.priority : '—'}</td>
+      <td style="font-weight:500">${esc(r.name || r.description || '—')}</td>
+      <td class="mono">${esc(r.direction || '—')}</td>
+      <td class="mono">${esc(r.protocol || 'any')}</td>
+      <td class="mono">${esc(r.source_address || r.source_ip || r.source || '*')}</td>
+      <td class="mono">${esc(r.dest_port || r.destination_port || '*')}</td>
+      <td><span class="rule-action action-${esc(action)}">${esc(action)}</span></td>
+      <td>${tags}</td>
+    </tr>`;
+  }).join('');
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+
+document.getElementById('ruleSearch').addEventListener('input', function(e) {
+  const q = e.target.value.toLowerCase();
+  if (!q) { renderRules(allRules); return; }
+  const filtered = allRules.filter(r =>
+    (r.name || '').toLowerCase().includes(q) ||
+    (r.description || '').toLowerCase().includes(q) ||
+    (r.protocol || '').toLowerCase().includes(q) ||
+    (r.group || '').toLowerCase().includes(q) ||
+    (r.tags || []).some(t => t.toLowerCase().includes(q))
+  );
+  renderRules(filtered);
+});
+
+async function validateRules() {
+  try {
+    const resp = await apiFetch('/rules/validate');
+    const alert = document.getElementById('rules-alert');
+    if (resp.success && resp.data && resp.data.valid) {
+      alert.innerHTML = '<div style="padding:12px 16px;background:var(--accent-green-dim);border:1px solid rgba(0,229,160,0.3);border-radius:var(--radius);color:var(--accent-green);font-size:0.82rem;margin-bottom:16px">Ruleset is valid. ' + (resp.data.enabled_rules || 0) + ' enabled rules ready to apply.</div>';
+    } else {
+      alert.innerHTML = '<div class="error-message">Validation failed. Check rule definitions.</div>';
+    }
+    setTimeout(() => { alert.innerHTML = ''; }, 5000);
+  } catch (e) {
+    document.getElementById('rules-alert').innerHTML = '<div class="error-message">Could not reach API for validation.</div>';
+  }
+}
+
+async function applyRules() {
+  try {
+    const resp = await apiPost('/rules/apply');
+    const alert = document.getElementById('rules-alert');
+    if (resp.success) {
+      alert.innerHTML = '<div style="padding:12px 16px;background:var(--accent-green-dim);border:1px solid rgba(0,229,160,0.3);border-radius:var(--radius);color:var(--accent-green);font-size:0.82rem;margin-bottom:16px">Rules applied successfully' + (DEMO_MODE ? ' (demo mode — not applied to system)' : '') + '.</div>';
+    } else {
+      alert.innerHTML = '<div class="error-message">Apply failed: ' + esc(resp.error || 'Unknown error') + '</div>';
+    }
+    setTimeout(() => { alert.innerHTML = ''; }, 5000);
+  } catch (e) {
+    document.getElementById('rules-alert').innerHTML = '<div class="error-message">Could not reach API.</div>';
+  }
+}
+
+async function rollbackRules() {
+  try {
+    const resp = await apiPost('/rules/rollback');
+    const alert = document.getElementById('rules-alert');
+    if (resp.success) {
+      alert.innerHTML = '<div style="padding:12px 16px;background:var(--accent-green-dim);border:1px solid rgba(0,229,160,0.3);border-radius:var(--radius);color:var(--accent-green);font-size:0.82rem;margin-bottom:16px">Rollback successful.</div>';
+      fetchRules();
+    } else {
+      alert.innerHTML = '<div class="error-message">' + esc(resp.error || 'Rollback failed') + '</div>';
+    }
+    setTimeout(() => { alert.innerHTML = ''; }, 5000);
+  } catch (e) {
+    document.getElementById('rules-alert').innerHTML = '<div class="error-message">Could not reach API.</div>';
+  }
+}
+
+async function fetchHosts() {
+  try {
+    const resp = await apiFetch('/monitor/hosts');
+    if (!resp.success) return;
+    const hosts = resp.data || [];
+    const badge = document.getElementById('hosts-total-badge');
+    if (badge) badge.textContent = hosts.length + ' hosts';
+    const container = document.getElementById('hostListBody');
+    if (hosts.length === 0) {
+      container.innerHTML = '<div class="session-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg><p>No hosts discovered</p></div>';
+      return;
+    }
+    container.innerHTML = hosts.map(h => `
+      <div class="host-item">
+        <div class="host-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="6" y1="10" x2="6" y2="14"/></svg>
+        </div>
+        <div class="host-info">
+          <div class="host-name">${esc(h.hostname || h.ip)}</div>
+          <div class="host-detail">${esc(h.ip)}${h.mac ? ' &middot; ' + esc(h.mac) : ''}</div>
+        </div>
+        <div class="host-connections">${h.connections || 0} conn</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    document.getElementById('hostListBody').innerHTML = '<div class="session-empty"><p>Failed to load hosts</p></div>';
+  }
+}
+
+async function fetchSessions() {
+  try {
+    const resp = await apiFetch('/monitor/sessions');
+    if (!resp.success) {
+      document.getElementById('sessionsBody').innerHTML = '<tr><td colspan="4" class="session-empty"><p>Could not load sessions</p></td></tr>';
+      return;
+    }
+    const sessions = resp.data || [];
+    document.getElementById('session-count-badge').textContent = sessions.length + ' sessions';
+    const tbody = document.getElementById('sessionsBody');
+    if (sessions.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--text-dim)">No active sessions' + (DEMO_MODE ? ' (session tracking requires elevated privileges)' : '') + '</td></tr>';
+      return;
+    }
+    tbody.innerHTML = sessions.map(s => `
+      <tr>
+        <td class="mono">${esc(s.local_addr)}</td>
+        <td class="mono">${esc(s.remote_addr)}</td>
+        <td><span class="rule-action action-accept">${esc(s.status)}</span></td>
+        <td class="mono">${s.pid != null ? s.pid : '—'}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    document.getElementById('sessionsBody').innerHTML = '<tr><td colspan="4" class="session-empty"><p>Failed to load sessions (may require elevated privileges)</p></td></tr>';
+  }
+}
+
+async function fetchPlugins() {
+  try {
+    const resp = await apiFetch('/plugins');
+    if (!resp.success) return;
+    const plugins = resp.data || [];
+    const pluginsWithRoutes = await Promise.all(
+      plugins.map(async plugin => {
+        try {
+          const routeResp = await apiFetch('/plugins/' + encodeURIComponent(plugin.name) + '/routes');
+          return { ...plugin, routes: routeResp.success ? (routeResp.data || []) : [] };
+        } catch (_e) {
+          return { ...plugin, routes: [] };
+        }
+      })
+    );
+    cachedPlugins = pluginsWithRoutes;
+    const grid = document.getElementById('pluginGrid');
+    if (pluginsWithRoutes.length === 0) {
+      grid.innerHTML = '<div class="session-empty"><p>No plugins loaded</p></div>';
+      updateOperationalPanels();
+      return;
+    }
+    grid.innerHTML = pluginsWithRoutes.map(p => {
+      const isActive = p.state === 'enabled';
+      const stateLabel = p.state || 'unknown';
+      const routes = (p.routes || []).map(route => `
+        <span class="route-chip"><strong>${esc(route.method || 'GET')}</strong>${esc(route.path || '')}</span>
+      `).join('');
+      return `
+        <div class="plugin-card">
+          <div class="plugin-card-header">
+            <span class="plugin-card-name">${esc(p.name)}</span>
+            <span class="plugin-status ${isActive ? 'active' : 'inactive'}">
+              <span class="rule-state-dot ${isActive ? 'enabled' : 'disabled'}"></span>
+              ${esc(stateLabel)}
+            </span>
+          </div>
+          <div class="plugin-card-desc">${esc(p.description || 'No description available')}</div>
+          <div class="plugin-routes">${routes || '<span class="helper-copy">No plugin routes exposed.</span>'}</div>
+          <div class="helper-copy">Plugin API proxy: <span class="mono">/api/v1/plugins/${esc(p.name)}/api/&lt;subpath&gt;</span></div>
+          <div class="plugin-card-footer">
+            ${isActive
+              ? `<button class="btn btn-sm btn-danger" onclick="togglePlugin('${esc(p.name)}', false)">Disable</button>`
+              : `<button class="btn btn-sm btn-primary" onclick="togglePlugin('${esc(p.name)}', true)">Enable</button>`
+            }
+          </div>
+        </div>`;
+    }).join('');
+    updateOperationalPanels();
+  } catch (e) {
+    document.getElementById('pluginGrid').innerHTML = '<div class="session-empty"><p>Failed to load plugins</p></div>';
+  }
+}
+
+async function togglePlugin(name, enable) {
+  try {
+    await apiPost('/plugins/' + encodeURIComponent(name) + '/' + (enable ? 'enable' : 'disable'));
+    fetchPlugins();
+  } catch (e) {
+    console.error('Plugin toggle failed:', e);
+  }
+}
+
+async function fetchSystemInfo() {
+  try {
+    const resp = await apiFetch('/system/info');
+    if (!resp.success) return;
+    const info = resp.data;
+    cachedSystemInfo = info;
+    document.getElementById('sysInfoGrid').innerHTML = [
+      { label: 'Version', value: info.version || '—' },
+      { label: 'Hostname', value: info.hostname || '—' },
+      { label: 'Platform', value: info.platform || '—' },
+      { label: 'Python', value: info.python || '—' },
+      { label: 'nftables', value: info.nftables_available ? 'Available' : 'Not available' },
+      { label: 'Mode', value: DEMO_MODE ? 'Demo' : 'Live' },
+    ].map(i => `
+      <div class="info-item">
+        <div class="info-item-label">${i.label}</div>
+        <div class="info-item-value">${esc(i.value)}</div>
+      </div>
+    `).join('');
+
+    // Update version in topbar
+    document.getElementById('version-label').textContent = 'v' + (info.version || '0.2.0');
+    updateOperationalPanels();
+  } catch (e) {
+    console.error('Failed to fetch system info:', e);
+  }
+}
+
+// ═══ POLLING LOOP ═══
+function startPolling() {
+  // Initial data load
+  fetchDashboardData();
+  fetchRules();
+  fetchSystemInfo();
+  fetchPlugins();
+  renderSessionNotice();
+
+  // Poll every 3 seconds for live data
+  pollTimer = setInterval(() => {
+    // Only fetch dashboard data if on a view that needs it
+    if (['dashboard', 'traffic', 'interfaces', 'resources'].includes(currentView)) {
+      fetchDashboardData();
+    }
+  }, 3000);
+}
+
+// ═══ INIT ═══
+const initialRoute = resolveViewFromHash(window.location.hash);
+renderSidebar('dashboard');
+switchView(initialRoute.view, initialRoute.sidebar, false);
+startPolling();
+window.addEventListener('hashchange', () => {
+  const route = resolveViewFromHash(window.location.hash);
+  if (route.view !== currentView || route.sidebar !== currentSidebar) {
+    switchView(route.view, route.sidebar, false);
+  }
+});
+window.addEventListener('resize', () => {
+  if (cachedStats) {
+    const fmtBytesChart = v => fmtBytes(v).replace('/s', '');
+    const fmtPct = v => Math.round(v) + '%';
+    drawChart('throughputChart', [
+      { data: throughputInHistory, color: 'rgb(0, 229, 160)' },
+      { data: throughputOutHistory, color: 'rgb(255, 169, 64)' },
+    ], { formatY: fmtBytesChart });
+    drawChart('cpuChart', [{ data: cpuHistory, color: 'rgb(59, 130, 246)' }], { maxY: 100, formatY: fmtPct });
+    drawChart('trafficFullChart', [
+      { data: throughputInHistory, color: 'rgb(0, 229, 160)' },
+      { data: throughputOutHistory, color: 'rgb(255, 169, 64)' },
+    ], { formatY: fmtBytesChart });
+    drawChart('resCpuChart', [{ data: cpuHistory, color: 'rgb(59, 130, 246)' }], { maxY: 100, formatY: fmtPct });
+  }
+});
 </script>
 </body>
 </html>

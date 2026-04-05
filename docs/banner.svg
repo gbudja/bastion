@@ -89,7 +89,7 @@
   <!-- Version badge -->
   <g transform="translate(475, 240)">
     <rect width="56" height="22" rx="4" fill="#00e5a0" opacity="0.15"/>
-    <text x="28" y="15" font-family="'Courier New', monospace" font-size="11" fill="#00e5a0" text-anchor="middle" font-weight="600">v0.1.0</text>
+    <text x="28" y="15" font-family="'Courier New', monospace" font-size="11" fill="#00e5a0" text-anchor="middle" font-weight="600">v0.2.0</text>
   </g>
   <g transform="translate(540, 240)">
     <rect width="62" height="22" rx="4" fill="#3b82f6" opacity="0.12"/>

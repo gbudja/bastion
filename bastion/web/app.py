@@ -9,8 +9,10 @@ from __future__ import annotations
 import os
 import secrets
 from pathlib import Path
+
 from flask import Flask, Response, jsonify, render_template
 
+from bastion import __version__
 from bastion.api.routes import api_bp, init_api
 from bastion.core.manager import RuleManager
 from bastion.core.monitor import NetworkMonitor
@@ -56,6 +58,6 @@ def create_app(
 
     @app.route("/health")
     def health() -> tuple[Response, int]:
-        return jsonify({"status": "ok", "version": "0.1.0"}), 200
+        return jsonify({"status": "ok", "version": __version__}), 200
 
     return app

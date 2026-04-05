@@ -12,6 +12,7 @@ from typing import Any
 
 from flask import Blueprint, Response, jsonify, request
 
+from bastion import __version__
 from bastion.core.manager import RuleManager
 from bastion.core.models import Direction, RuleState
 from bastion.core.monitor import NetworkMonitor
@@ -423,7 +424,7 @@ def system_info() -> tuple[Response, int]:
 
     return api_response(
         {
-            "version": "0.1.0",
+            "version": __version__,
             "hostname": platform.node(),
             "platform": platform.platform(),
             "python": platform.python_version(),

@@ -16,6 +16,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from bastion import __version__
+
 console = Console()
 
 BANNER = r"""
@@ -27,7 +29,7 @@ BANNER = r"""
   ██████╔╝██║  ██║███████║   ██║   ██║╚██████╔╝██║ ╚████║
   ╚═════╝ ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
 [/bold cyan]
-[dim]  Open-Source Network Gateway & Firewall  v0.1.0[/dim]
+[dim]  Open-Source Network Gateway & Firewall  v{version}[/dim]
 """
 
 
@@ -55,7 +57,7 @@ def cli(verbose: bool) -> None:
 @click.option("--config", type=click.Path(), default=None, help="Config file path")
 def start(host: str, port: int, demo: bool, config: str | None) -> None:
     """Start the Bastion gateway."""
-    console.print(BANNER)
+    console.print(BANNER.format(version=__version__))
 
     if demo:
         console.print(

@@ -521,6 +521,16 @@ class TestApiAndWeb:
         assert response.status_code == 200
         assert payload["data"]["enabled"] is True
 
+    def test_dashboard_template_exposes_navigation_shell(self):
+        response = self.client.get("/")
+        html = response.get_data(as_text=True)
+        assert response.status_code == 200
+        assert 'data-view="dashboard"' in html
+        assert 'data-view="rules"' in html
+        assert 'id="controlPlaneGrid"' in html
+        assert 'id="pluginSummary"' in html
+        assert 'id="sessionNotice"' in html
+
     def test_non_demo_app_requires_secret_key(self, monkeypatch):
         monkeypatch.delenv("BASTION_SECRET_KEY", raising=False)
         with pytest.raises(RuntimeError):

@@ -24,7 +24,7 @@
   <rect x="20" y="44" width="32" height="32" rx="6" fill="#00e5a0" opacity="0.9"/>
   <text x="36" y="66" font-family="system-ui" font-size="16" fill="#0a0e14" font-weight="700" text-anchor="middle">B</text>
   <text x="62" y="65" font-family="system-ui" font-size="15" fill="#e6edf3" font-weight="600">Bastion</text>
-  <text x="130" y="65" font-family="monospace" font-size="11" fill="#4a5568">v0.1.0</text>
+  <text x="130" y="65" font-family="monospace" font-size="11" fill="#4a5568">v0.2.0</text>
 
   <!-- Nav pills -->
   <g transform="translate(400, 48)">
