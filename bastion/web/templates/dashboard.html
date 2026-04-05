@@ -487,6 +487,221 @@ canvas { width: 100% !important; height: 100% !important; }
 }
 
 .btn-sm { padding: 4px 10px; font-size: 0.72rem; }
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.view-shell {
+  position: relative;
+}
+
+.section-state {
+  padding: 18px 20px;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.section-state.empty {
+  color: var(--text-dim);
+}
+
+.section-state.error {
+  color: var(--accent-red);
+}
+
+.section-inline-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+}
+
+.section-inline-loader::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(34, 211, 238, 0.18);
+  border-top-color: var(--accent-cyan);
+  animation: spin 0.8s linear infinite;
+}
+
+.rules-editor {
+  margin-bottom: 16px;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.25s ease, opacity 0.2s ease, margin-bottom 0.2s ease;
+}
+
+.rules-editor.open {
+  max-height: 900px;
+  opacity: 1;
+}
+
+.rules-editor .panel-body {
+  padding-top: 18px;
+}
+
+.editor-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.editor-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.editor-field.full {
+  grid-column: 1 / -1;
+}
+
+.editor-label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.editor-input,
+.editor-select,
+.editor-textarea,
+.plugin-route-input {
+  width: 100%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.84rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.editor-input:focus,
+.editor-select:focus,
+.editor-textarea:focus,
+.plugin-route-input:focus {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 1px rgba(0, 229, 160, 0.12);
+}
+
+.editor-textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.editor-hint {
+  color: var(--text-dim);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.editor-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.editor-secondary-actions,
+.row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.row-actions {
+  justify-content: flex-end;
+}
+
+.rule-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rule-secondary {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.plugin-route-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.plugin-route-item {
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.plugin-route-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.plugin-route-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plugin-route-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.plugin-route-response {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(10, 14, 20, 0.85);
+  border: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.plugin-route-response.error {
+  color: var(--accent-red);
+  border-color: rgba(255, 71, 87, 0.25);
+}
+
+.pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.config-pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
 
 table {
   width: 100%;
@@ -974,6 +1189,11 @@ tbody tr:hover { background: var(--bg-card-hover); }
   .main { grid-template-columns: 1fr; }
   .sidebar { display: none; }
   .panels-grid { grid-template-columns: 1fr; }
+  .editor-form-grid { grid-template-columns: 1fr; }
+  .topbar { padding: 0 12px; }
+  .content { padding: 16px; }
+  .plugin-route-actions { flex-direction: column; align-items: stretch; }
+  .row-actions { justify-content: flex-start; }
 }
 
 /* ═══ SCROLLBAR ═══ */
@@ -1290,12 +1510,134 @@ tbody tr:hover { background: var(--bg-card-hover); }
           <div class="content-header-sub">Manage nftables-based firewall policy</div>
         </div>
         <div style="display:flex;gap:8px">
+          <button class="btn" id="ruleAddButton">+ Add Rule</button>
           <button class="btn" onclick="fetchRules()">&#8635; Refresh</button>
           <button class="btn" onclick="validateRules()">&#10003; Validate</button>
           <button class="btn btn-primary" onclick="applyRules()">&#9654; Apply Rules</button>
         </div>
       </div>
       <div id="rules-alert"></div>
+      <div class="rules-editor" id="ruleEditorPanel">
+        <div class="panel panel-full">
+          <div class="panel-header">
+            <span class="panel-title" id="ruleEditorTitle">Create Rule</span>
+            <span class="panel-badge" id="ruleEditorBadge" style="background:var(--bg-primary);color:var(--text-dim)">new</span>
+          </div>
+          <div class="panel-body">
+            <div id="rule-form-error"></div>
+            <form id="ruleForm">
+              <input type="hidden" id="rule-id">
+              <div class="editor-form-grid">
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-name">Name</label>
+                  <input class="editor-input" id="rule-name" name="name" maxlength="120" required>
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-group">Group</label>
+                  <input class="editor-input" id="rule-group" name="group" maxlength="48" placeholder="edge, web, ssh">
+                </div>
+                <div class="editor-field full">
+                  <label class="editor-label" for="rule-description">Description</label>
+                  <textarea class="editor-textarea" id="rule-description" name="description" maxlength="500" placeholder="Explain the intent of this policy change."></textarea>
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-direction">Direction</label>
+                  <select class="editor-select" id="rule-direction" name="direction">
+                    <option value="inbound">Inbound</option>
+                    <option value="outbound">Outbound</option>
+                    <option value="forward">Forward</option>
+                  </select>
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-state">State</label>
+                  <select class="editor-select" id="rule-state" name="state">
+                    <option value="enabled">Enabled</option>
+                    <option value="disabled">Disabled</option>
+                  </select>
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-protocol">Protocol</label>
+                  <select class="editor-select" id="rule-protocol" name="protocol">
+                    <option value="any">Any</option>
+                    <option value="tcp">TCP</option>
+                    <option value="udp">UDP</option>
+                    <option value="icmp">ICMP</option>
+                  </select>
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-action">Action</label>
+                  <select class="editor-select" id="rule-action" name="action">
+                    <option value="accept">Accept</option>
+                    <option value="drop">Drop</option>
+                    <option value="reject">Reject</option>
+                    <option value="rate_limit">Rate Limit</option>
+                    <option value="jump">Jump</option>
+                  </select>
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-source-address">Source Address</label>
+                  <input class="editor-input" id="rule-source-address" name="source_address" maxlength="64" placeholder="192.168.1.0/24">
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-destination-address">Destination Address</label>
+                  <input class="editor-input" id="rule-destination-address" name="destination_address" maxlength="64" placeholder="10.0.0.10/32">
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-source-port">Source Port</label>
+                  <input class="editor-input" id="rule-source-port" name="source_port" maxlength="16" placeholder="1024-65535">
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-destination-port">Destination Port</label>
+                  <input class="editor-input" id="rule-destination-port" name="destination_port" maxlength="16" placeholder="443">
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-interface-in">Ingress Interface</label>
+                  <input class="editor-input" id="rule-interface-in" name="interface_in" maxlength="64" placeholder="eth0">
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-interface-out">Egress Interface</label>
+                  <input class="editor-input" id="rule-interface-out" name="interface_out" maxlength="64" placeholder="eth1">
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-priority">Priority</label>
+                  <input class="editor-input" id="rule-priority" name="priority" type="number" min="0" max="100000" value="100">
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-jump-target">Jump Target</label>
+                  <input class="editor-input" id="rule-jump-target" name="jump_target" maxlength="64" placeholder="custom_chain">
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-rate-limit">Rate Limit</label>
+                  <input class="editor-input" id="rule-rate-limit" name="rate_limit_rate" type="number" min="1" max="100000" placeholder="10">
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-rate-period">Rate Period</label>
+                  <select class="editor-select" id="rule-rate-period" name="rate_limit_period">
+                    <option value="second">second</option>
+                    <option value="minute">minute</option>
+                    <option value="hour">hour</option>
+                  </select>
+                </div>
+                <div class="editor-field">
+                  <label class="editor-label" for="rule-rate-burst">Rate Burst</label>
+                  <input class="editor-input" id="rule-rate-burst" name="rate_limit_burst" type="number" min="1" max="100000" placeholder="5">
+                </div>
+                <div class="editor-field full">
+                  <label class="editor-label" for="rule-tags">Tags</label>
+                  <input class="editor-input" id="rule-tags" name="tags" maxlength="160" placeholder="comma,separated,tags">
+                  <div class="editor-hint">Client-side input is normalized before submission; backend validation still remains authoritative.</div>
+                </div>
+              </div>
+              <div class="editor-actions">
+                <div class="editor-secondary-actions">
+                  <button type="button" class="btn" id="ruleFormCancel">Cancel</button>
+                </div>
+                <button type="submit" class="btn btn-primary" id="ruleFormSubmit">Save Rule</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
       <div class="panel panel-full">
         <div class="panel-header">
           <span class="panel-title">Rule Set</span>
@@ -1317,6 +1659,7 @@ tbody tr:hover { background: var(--bg-card-hover); }
               <th>Dest Port</th>
               <th>Action</th>
               <th>Tags</th>
+              <th>Controls</th>
             </tr>
           </thead>
           <tbody id="rulesBody"></tbody>
@@ -1412,10 +1755,10 @@ tbody tr:hover { background: var(--bg-card-hover); }
         <table>
           <thead>
             <tr>
-              <th>Local Address</th>
-              <th>Remote Address</th>
-              <th>Status</th>
-              <th>PID</th>
+              <th>Source IP</th>
+              <th>Destination</th>
+              <th>Protocol</th>
+              <th>Duration</th>
             </tr>
           </thead>
           <tbody id="sessionsBody">
@@ -1459,7 +1802,7 @@ tbody tr:hover { background: var(--bg-card-hover); }
           <h1>System Configuration</h1>
           <div class="content-header-sub">Runtime environment and version information</div>
         </div>
-        <button class="btn" onclick="fetchSystemInfo()">&#8635; Refresh</button>
+        <button class="btn" onclick="fetchConfigData()">&#8635; Refresh</button>
       </div>
       <div class="panels-grid">
         <div class="panel">
@@ -1477,6 +1820,29 @@ tbody tr:hover { background: var(--bg-card-hover); }
         </div>
         <div class="panel">
           <div class="panel-header">
+            <span class="panel-title">Runtime Configuration</span>
+          </div>
+          <div class="panel-body">
+            <div class="info-grid" id="configStateGrid">
+              <div class="info-item">
+                <div class="info-item-label">Loading</div>
+                <div class="info-item-value">&mdash;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Loaded Plugins</span>
+          </div>
+          <div class="panel-body">
+            <div class="pill-list" id="configPluginList">
+              <span class="config-pill">Loading...</span>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
             <span class="panel-title">API Endpoints</span>
           </div>
           <div class="panel-body">
@@ -1489,6 +1855,7 @@ tbody tr:hover { background: var(--bg-card-hover); }
               <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/monitor/sessions</span></div>
               <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/plugins</span></div>
               <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/system/info</span></div>
+              <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/system/config</span></div>
               <div><span style="color:var(--accent-blue)">POST</span> <span class="mono">/rules/apply</span></div>
               <div><span style="color:var(--accent-blue)">POST</span> <span class="mono">/rules/rollback</span></div>
               <div><span style="color:var(--accent-green)">GET</span> <span class="mono">/rules/validate</span></div>
@@ -1520,9 +1887,12 @@ let currentView = 'dashboard';
 let currentSidebar = 'overview';
 let cachedStats = null;
 let cachedSystemInfo = null;
+let cachedRuntimeConfig = null;
 let cachedPlugins = [];
 let allRules = [];
 let lastRefreshLabel = 'never';
+let ruleEditorMode = 'create';
+let activeRuleId = null;
 
 const throughputInHistory = Array(60).fill(0);
 const throughputOutHistory = Array(60).fill(0);
@@ -1669,14 +2039,14 @@ function onViewEnter(viewId) {
     case 'resources': fetchDashboardData(); break;
     case 'sessions': renderSessionNotice(); fetchSessions(); break;
     case 'plugins': fetchPlugins(); break;
-    case 'config': fetchSystemInfo(); break;
+    case 'config': fetchConfigData(); break;
   }
 }
 
 // ═══ API HELPERS ═══
-async function apiFetch(path) {
+async function apiRequest(path, options = {}) {
   try {
-    const resp = await fetch('/api/v1' + path);
+    const resp = await fetch('/api/v1' + path, options);
     const data = await resp.json();
     if (!apiOk) {
       apiOk = true;
@@ -1691,19 +2061,29 @@ async function apiFetch(path) {
   }
 }
 
+async function apiFetch(path) {
+  return apiRequest(path);
+}
+
 async function apiPost(path, payload = null) {
-  try {
-    const options = { method: 'POST', headers: {} };
-    if (payload !== null) {
-      options.headers['Content-Type'] = 'application/json';
-      options.body = JSON.stringify(payload);
-    }
-    const resp = await fetch('/api/v1' + path, options);
-    return await resp.json();
-  } catch (e) {
-    apiOk = false;
-    throw e;
+  const options = { method: 'POST', headers: {} };
+  if (payload !== null) {
+    options.headers['Content-Type'] = 'application/json';
+    options.body = JSON.stringify(payload);
   }
+  return apiRequest(path, options);
+}
+
+async function apiPut(path, payload) {
+  return apiRequest(path, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+}
+
+async function apiDelete(path) {
+  return apiRequest(path, { method: 'DELETE' });
 }
 
 // ═══ FORMATTERS ═══
@@ -1735,6 +2115,19 @@ function fmtClock(date = new Date()) {
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
+function fmtDuration(seconds) {
+  const total = Math.max(0, Math.floor(Number(seconds) || 0));
+  if (total < 60) return total + 's';
+  if (total < 3600) {
+    const minutes = Math.floor(total / 60);
+    const secs = total % 60;
+    return `${minutes}m ${secs}s`;
+  }
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  return `${hours}h ${minutes}m`;
+}
+
 function updateOperationalPanels() {
   const controlGrid = document.getElementById('controlPlaneGrid');
   const operatorNotice = document.getElementById('operatorNotice');
@@ -1746,11 +2139,12 @@ function updateOperationalPanels() {
     const activeSessions = cachedStats?.network?.active_sessions ?? '—';
     const hostCount = cachedStats?.hosts?.total ?? '—';
     const nftState = cachedSystemInfo?.nftables_available ? 'ready' : (DEMO_MODE ? 'simulated' : 'offline');
+    const runtimeMode = cachedRuntimeConfig?.mode || (DEMO_MODE ? 'demo' : 'live');
 
     controlGrid.innerHTML = [
       {
         label: 'Mode',
-        value: DEMO_MODE ? 'demo' : 'live',
+        value: runtimeMode,
         detail: DEMO_MODE ? 'Simulated telemetry and dry-run firewall apply.' : 'Operating against host services.',
       },
       {
@@ -1827,6 +2221,7 @@ function renderSessionNotice() {
   } else {
     items.push('<div class="note-item"><strong>Live mode:</strong> session visibility depends on host permissions and what the platform can read from the network stack.</div>');
   }
+  items.push('<div class="note-item"><strong>Duration:</strong> session duration is the time Bastion has observed a connection, not a kernel-level packet timeline.</div>');
   items.push('<div class="note-item"><strong>Purpose:</strong> this table is a situational view, not a full packet capture or forensic timeline.</div>');
   notice.innerHTML = items.join('');
 }
@@ -2029,112 +2424,425 @@ function renderInterfaces(ifaces) {
   `).join('');
 }
 
-async function fetchRules() {
-  try {
-    const resp = await apiFetch('/rules');
-    if (!resp.success) return;
-    allRules = resp.data || [];
-    renderRules(allRules);
-    // Update badges
-    const enabled = allRules.filter(r => r.state === 'enabled').length;
-    const disabled = allRules.length - enabled;
-    const el = id => document.getElementById(id);
-    el('fw-rules').textContent = allRules.length;
-    el('fw-rules-detail').textContent = enabled + ' enabled \u00b7 ' + disabled + ' disabled';
-    el('rules-badge').textContent = allRules.length + ' rules';
-    const sbBadge = document.getElementById('sb-rule-count');
-    if (sbBadge) sbBadge.textContent = allRules.length;
-    const sb2Badge = document.getElementById('sb2-rule-count');
-    if (sb2Badge) sb2Badge.textContent = allRules.length;
-    updateOperationalPanels();
-  } catch (e) {
-    console.error('Failed to fetch rules:', e);
+function esc(s) { const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+
+function tableStateRow(message, colspan, kind = 'empty') {
+  return `<tr><td colspan="${colspan}" class="section-state ${kind}" style="text-align:center">${esc(message)}</td></tr>`;
+}
+
+function setRulesAlert(message, kind = 'success') {
+  const alert = document.getElementById('rules-alert');
+  if (!alert) return;
+  if (!message) {
+    alert.innerHTML = '';
+    return;
   }
+  if (kind === 'error') {
+    alert.innerHTML = `<div class="error-message">${esc(message)}</div>`;
+    return;
+  }
+  alert.innerHTML = `<div style="padding:12px 16px;background:var(--accent-green-dim);border:1px solid rgba(0,229,160,0.3);border-radius:var(--radius);color:var(--accent-green);font-size:0.82rem;margin-bottom:16px">${esc(message)}</div>`;
+}
+
+function setRuleFormError(message) {
+  const target = document.getElementById('rule-form-error');
+  if (!target) return;
+  target.innerHTML = message ? `<div class="error-message">${esc(message)}</div>` : '';
+}
+
+function sortRules(rules) {
+  return [...rules].sort((a, b) => {
+    const priorityDelta = (a.priority ?? 100) - (b.priority ?? 100);
+    if (priorityDelta !== 0) return priorityDelta;
+    return (a.name || '').localeCompare(b.name || '');
+  });
+}
+
+function updateRuleCounters() {
+  const enabled = allRules.filter(r => r.state === 'enabled').length;
+  const disabled = allRules.length - enabled;
+  const el = id => document.getElementById(id);
+  el('fw-rules').textContent = allRules.length;
+  el('fw-rules-detail').textContent = enabled + ' enabled \u00b7 ' + disabled + ' disabled';
+  el('rules-badge').textContent = allRules.length + ' rules';
+  const sbBadge = document.getElementById('sb-rule-count');
+  if (sbBadge) sbBadge.textContent = allRules.length;
+  const sb2Badge = document.getElementById('sb2-rule-count');
+  if (sb2Badge) sb2Badge.textContent = allRules.length;
+}
+
+function getRuleFilterQuery() {
+  return (document.getElementById('ruleSearch')?.value || '').trim().toLowerCase();
+}
+
+function getFilteredRules() {
+  const query = getRuleFilterQuery();
+  if (!query) return sortRules(allRules);
+  return sortRules(allRules.filter(rule =>
+    (rule.name || '').toLowerCase().includes(query)
+    || (rule.description || '').toLowerCase().includes(query)
+    || (rule.protocol || '').toLowerCase().includes(query)
+    || (rule.group || '').toLowerCase().includes(query)
+    || (rule.direction || '').toLowerCase().includes(query)
+    || (rule.source_address || '').toLowerCase().includes(query)
+    || (rule.destination_port || '').toLowerCase().includes(query)
+    || (rule.tags || []).some(tag => String(tag).toLowerCase().includes(query))
+  ));
+}
+
+function applyRuleFilter() {
+  renderRules(getFilteredRules());
+}
+
+function sanitizeText(value, maxLen = 160) {
+  return String(value || '')
+    .replace(/[\u0000-\u001F\u007F]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, maxLen);
+}
+
+function sanitizeIdentifier(value, maxLen = 64) {
+  return String(value || '')
+    .replace(/[^a-zA-Z0-9_.-]/g, '')
+    .trim()
+    .slice(0, maxLen);
+}
+
+function sanitizeAddress(value) {
+  return String(value || '')
+    .replace(/[^0-9A-Fa-f:./]/g, '')
+    .trim()
+    .slice(0, 64);
+}
+
+function sanitizePortValue(value) {
+  return String(value || '')
+    .replace(/[^0-9-]/g, '')
+    .trim()
+    .slice(0, 16);
+}
+
+function sanitizeTagList(value) {
+  return String(value || '')
+    .split(',')
+    .map(tag => sanitizeText(tag, 32))
+    .filter(Boolean);
+}
+
+function openRuleEditor(rule = null) {
+  const panel = document.getElementById('ruleEditorPanel');
+  const title = document.getElementById('ruleEditorTitle');
+  const badge = document.getElementById('ruleEditorBadge');
+  const form = document.getElementById('ruleForm');
+  if (!panel || !title || !badge || !form) return;
+
+  ruleEditorMode = rule ? 'edit' : 'create';
+  activeRuleId = rule?.id || null;
+  form.reset();
+  document.getElementById('rule-id').value = rule?.id || '';
+  document.getElementById('rule-name').value = rule?.name || '';
+  document.getElementById('rule-description').value = rule?.description || '';
+  document.getElementById('rule-group').value = rule?.group || '';
+  document.getElementById('rule-direction').value = rule?.direction || 'inbound';
+  document.getElementById('rule-state').value = rule?.state || 'enabled';
+  document.getElementById('rule-protocol').value = rule?.protocol || 'any';
+  document.getElementById('rule-action').value = rule?.action || 'accept';
+  document.getElementById('rule-source-address').value = rule?.source_address || '';
+  document.getElementById('rule-destination-address').value = rule?.destination_address || '';
+  document.getElementById('rule-source-port').value = rule?.source_port || '';
+  document.getElementById('rule-destination-port').value = rule?.destination_port || '';
+  document.getElementById('rule-interface-in').value = rule?.interface_in || '';
+  document.getElementById('rule-interface-out').value = rule?.interface_out || '';
+  document.getElementById('rule-priority').value = rule?.priority ?? 100;
+  document.getElementById('rule-jump-target').value = rule?.jump_target || '';
+  document.getElementById('rule-rate-limit').value = rule?.rate_limit?.rate ?? '';
+  document.getElementById('rule-rate-period').value = rule?.rate_limit?.period || 'second';
+  document.getElementById('rule-rate-burst').value = rule?.rate_limit?.burst ?? '';
+  document.getElementById('rule-tags').value = (rule?.tags || []).join(', ');
+  title.textContent = rule ? 'Edit Rule' : 'Create Rule';
+  badge.textContent = rule ? `editing ${rule.id}` : 'new';
+  panel.classList.add('open');
+  syncRuleFormState();
+  setRuleFormError('');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeRuleEditor() {
+  const panel = document.getElementById('ruleEditorPanel');
+  if (!panel) return;
+  panel.classList.remove('open');
+  activeRuleId = null;
+  ruleEditorMode = 'create';
+  setRuleFormError('');
+}
+
+function syncRuleFormState() {
+  const protocol = document.getElementById('rule-protocol').value;
+  const action = document.getElementById('rule-action').value;
+  const portsEnabled = protocol === 'tcp' || protocol === 'udp';
+  document.getElementById('rule-source-port').disabled = !portsEnabled;
+  document.getElementById('rule-destination-port').disabled = !portsEnabled;
+  document.getElementById('rule-jump-target').disabled = action !== 'jump';
+  document.getElementById('rule-rate-limit').disabled = action !== 'rate_limit';
+  document.getElementById('rule-rate-period').disabled = action !== 'rate_limit';
+  document.getElementById('rule-rate-burst').disabled = action !== 'rate_limit';
+}
+
+function buildRulePayload() {
+  const action = document.getElementById('rule-action').value;
+  const protocol = document.getElementById('rule-protocol').value;
+  const rate = document.getElementById('rule-rate-limit').value;
+  const payload = {
+    name: sanitizeText(document.getElementById('rule-name').value, 120),
+    description: sanitizeText(document.getElementById('rule-description').value, 500),
+    group: sanitizeIdentifier(document.getElementById('rule-group').value, 48) || null,
+    direction: document.getElementById('rule-direction').value,
+    state: document.getElementById('rule-state').value,
+    protocol,
+    action,
+    source_address: sanitizeAddress(document.getElementById('rule-source-address').value) || null,
+    destination_address: sanitizeAddress(document.getElementById('rule-destination-address').value) || null,
+    source_port: protocol === 'tcp' || protocol === 'udp'
+      ? (sanitizePortValue(document.getElementById('rule-source-port').value) || null)
+      : null,
+    destination_port: protocol === 'tcp' || protocol === 'udp'
+      ? (sanitizePortValue(document.getElementById('rule-destination-port').value) || null)
+      : null,
+    interface_in: sanitizeIdentifier(document.getElementById('rule-interface-in').value) || null,
+    interface_out: sanitizeIdentifier(document.getElementById('rule-interface-out').value) || null,
+    priority: Number(document.getElementById('rule-priority').value || 100),
+    jump_target: action === 'jump'
+      ? (sanitizeIdentifier(document.getElementById('rule-jump-target').value) || null)
+      : null,
+    tags: sanitizeTagList(document.getElementById('rule-tags').value),
+    rate_limit: null,
+  };
+
+  if (!payload.name) {
+    throw new Error('Rule name is required.');
+  }
+  if (!Number.isFinite(payload.priority) || payload.priority < 0) {
+    throw new Error('Priority must be a non-negative number.');
+  }
+  if (action === 'jump' && !payload.jump_target) {
+    throw new Error('Jump target is required for jump actions.');
+  }
+  if (action === 'rate_limit') {
+    const burst = document.getElementById('rule-rate-burst').value;
+    if (!rate) {
+      throw new Error('Rate limit rules require a rate.');
+    }
+    payload.rate_limit = {
+      rate: Number(rate),
+      period: document.getElementById('rule-rate-period').value || 'second',
+      burst: Number(burst || 5),
+    };
+  }
+
+  return payload;
+}
+
+function upsertRule(rule) {
+  const idx = allRules.findIndex(existing => existing.id === rule.id);
+  if (idx >= 0) {
+    allRules[idx] = rule;
+  } else {
+    allRules.push(rule);
+  }
+  allRules = sortRules(allRules);
+  updateRuleCounters();
+  applyRuleFilter();
+  updateOperationalPanels();
 }
 
 function renderRules(rules) {
   const tbody = document.getElementById('rulesBody');
   if (!tbody) return;
-  if (rules.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--text-dim)">No rules found</td></tr>';
+  if (!rules.length) {
+    const message = allRules.length ? 'No rules match the current filter.' : 'No rules configured yet. Use Add Rule to create the first policy.';
+    tbody.innerHTML = tableStateRow(message, 10, allRules.length ? 'empty' : 'empty');
     return;
   }
-  tbody.innerHTML = rules.map(r => {
-    const state = r.state || 'enabled';
-    const action = r.action || 'accept';
-    const tags = (r.tags || []).map(t => `<span class="rule-tag">${esc(t)}</span>`).join('');
+  tbody.innerHTML = rules.map(rule => {
+    const state = rule.state || 'enabled';
+    const action = rule.action || 'accept';
+    const tags = (rule.tags || []).length
+      ? (rule.tags || []).map(tag => `<span class="rule-tag">${esc(tag)}</span>`).join('')
+      : '<span class="rule-secondary">No tags</span>';
+    const description = rule.description ? `<span class="rule-secondary">${esc(rule.description)}</span>` : '';
+    const toggleLabel = state === 'enabled' ? 'Disable' : 'Enable';
+    const source = rule.source_address || rule.destination_address || '*';
+    const destPort = rule.destination_port || 'any';
     return `<tr>
       <td><span class="rule-state"><span class="rule-state-dot ${esc(state)}"></span>${esc(state)}</span></td>
-      <td class="mono">${r.priority != null ? r.priority : '—'}</td>
-      <td style="font-weight:500">${esc(r.name || r.description || '—')}</td>
-      <td class="mono">${esc(r.direction || '—')}</td>
-      <td class="mono">${esc(r.protocol || 'any')}</td>
-      <td class="mono">${esc(r.source_address || r.source_ip || r.source || '*')}</td>
-      <td class="mono">${esc(r.dest_port || r.destination_port || '*')}</td>
+      <td class="mono">${rule.priority != null ? esc(rule.priority) : '&mdash;'}</td>
+      <td>
+        <div class="rule-name-cell">
+          <span style="font-weight:500">${esc(rule.name || 'Unnamed rule')}</span>
+          ${description}
+        </div>
+      </td>
+      <td class="mono">${esc(rule.direction || '—')}</td>
+      <td class="mono">${esc(rule.protocol || 'any')}</td>
+      <td class="mono">${esc(source)}</td>
+      <td class="mono">${esc(destPort)}</td>
       <td><span class="rule-action action-${esc(action)}">${esc(action)}</span></td>
       <td>${tags}</td>
+      <td>
+        <div class="row-actions">
+          <button class="btn btn-sm" data-rule-action="edit" data-rule-id="${esc(rule.id)}">Edit</button>
+          <button class="btn btn-sm" data-rule-action="toggle" data-rule-id="${esc(rule.id)}">${toggleLabel}</button>
+          <button class="btn btn-sm btn-danger" data-rule-action="delete" data-rule-id="${esc(rule.id)}">Delete</button>
+        </div>
+      </td>
     </tr>`;
   }).join('');
 }
 
-function esc(s) { const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+async function fetchRules() {
+  const tbody = document.getElementById('rulesBody');
+  if (tbody) {
+    tbody.innerHTML = tableStateRow('Loading rules from the Bastion API...', 10);
+  }
+  try {
+    const resp = await apiFetch('/rules');
+    if (!resp.success) {
+      if (tbody) tbody.innerHTML = tableStateRow(resp.error || 'Could not load rules.', 10, 'error');
+      return;
+    }
+    allRules = sortRules(resp.data || []);
+    updateRuleCounters();
+    applyRuleFilter();
+    updateOperationalPanels();
+  } catch (e) {
+    if (tbody) tbody.innerHTML = tableStateRow('Failed to load rules from the API.', 10, 'error');
+    console.error('Failed to fetch rules:', e);
+  }
+}
 
-document.getElementById('ruleSearch').addEventListener('input', function(e) {
-  const q = e.target.value.toLowerCase();
-  if (!q) { renderRules(allRules); return; }
-  const filtered = allRules.filter(r =>
-    (r.name || '').toLowerCase().includes(q) ||
-    (r.description || '').toLowerCase().includes(q) ||
-    (r.protocol || '').toLowerCase().includes(q) ||
-    (r.group || '').toLowerCase().includes(q) ||
-    (r.tags || []).some(t => t.toLowerCase().includes(q))
-  );
-  renderRules(filtered);
+document.getElementById('ruleSearch').addEventListener('input', applyRuleFilter);
+document.getElementById('ruleAddButton').addEventListener('click', () => openRuleEditor());
+document.getElementById('ruleFormCancel').addEventListener('click', closeRuleEditor);
+document.getElementById('rule-protocol').addEventListener('change', syncRuleFormState);
+document.getElementById('rule-action').addEventListener('change', syncRuleFormState);
+
+document.getElementById('ruleForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const submit = document.getElementById('ruleFormSubmit');
+  submit.disabled = true;
+  setRuleFormError('');
+  try {
+    const payload = buildRulePayload();
+    const isEdit = Boolean(activeRuleId);
+    const response = activeRuleId
+      ? await apiPut('/rules/' + encodeURIComponent(activeRuleId), payload)
+      : await apiPost('/rules', payload);
+    if (!response.success) {
+      throw new Error(response.error || 'Rule request failed.');
+    }
+    upsertRule(response.data);
+    closeRuleEditor();
+    setRulesAlert(isEdit ? 'Rule updated successfully.' : 'Rule created successfully.');
+    setTimeout(() => setRulesAlert(''), 4000);
+  } catch (error) {
+    setRuleFormError(error.message || 'Could not save the rule.');
+  } finally {
+    submit.disabled = false;
+  }
+});
+
+document.getElementById('rulesBody').addEventListener('click', async event => {
+  const actionButton = event.target.closest('[data-rule-action]');
+  if (!actionButton) return;
+
+  const ruleId = actionButton.dataset.ruleId;
+  const action = actionButton.dataset.ruleAction;
+  const rule = allRules.find(existing => existing.id === ruleId);
+  if (!rule) return;
+
+  if (action === 'edit') {
+    openRuleEditor(rule);
+    return;
+  }
+
+  actionButton.disabled = true;
+  try {
+    if (action === 'toggle') {
+      const response = await apiPost('/rules/' + encodeURIComponent(ruleId) + '/toggle');
+      if (!response.success) {
+        throw new Error(response.error || 'Could not toggle rule.');
+      }
+      upsertRule(response.data);
+      setRulesAlert(`Rule ${response.data.state === 'enabled' ? 'enabled' : 'disabled'} successfully.`);
+    }
+
+    if (action === 'delete') {
+      if (!window.confirm(`Delete rule "${rule.name || rule.id}"?`)) {
+        return;
+      }
+      const response = await apiDelete('/rules/' + encodeURIComponent(ruleId));
+      if (!response.success) {
+        throw new Error(response.error || 'Could not delete rule.');
+      }
+      allRules = allRules.filter(existing => existing.id !== ruleId);
+      updateRuleCounters();
+      applyRuleFilter();
+      updateOperationalPanels();
+      if (activeRuleId === ruleId) {
+        closeRuleEditor();
+      }
+      setRulesAlert('Rule deleted successfully.');
+    }
+
+    setTimeout(() => setRulesAlert(''), 4000);
+  } catch (error) {
+    setRulesAlert(error.message || 'Rule action failed.', 'error');
+  } finally {
+    actionButton.disabled = false;
+  }
 });
 
 async function validateRules() {
   try {
     const resp = await apiFetch('/rules/validate');
-    const alert = document.getElementById('rules-alert');
     if (resp.success && resp.data && resp.data.valid) {
-      alert.innerHTML = '<div style="padding:12px 16px;background:var(--accent-green-dim);border:1px solid rgba(0,229,160,0.3);border-radius:var(--radius);color:var(--accent-green);font-size:0.82rem;margin-bottom:16px">Ruleset is valid. ' + (resp.data.enabled_rules || 0) + ' enabled rules ready to apply.</div>';
+      setRulesAlert('Ruleset is valid. ' + (resp.data.enabled_rules || 0) + ' enabled rules ready to apply.');
     } else {
-      alert.innerHTML = '<div class="error-message">Validation failed. Check rule definitions.</div>';
+      setRulesAlert('Validation failed. Check rule definitions.', 'error');
     }
-    setTimeout(() => { alert.innerHTML = ''; }, 5000);
+    setTimeout(() => { setRulesAlert(''); }, 5000);
   } catch (e) {
-    document.getElementById('rules-alert').innerHTML = '<div class="error-message">Could not reach API for validation.</div>';
+    setRulesAlert('Could not reach API for validation.', 'error');
   }
 }
 
 async function applyRules() {
   try {
     const resp = await apiPost('/rules/apply');
-    const alert = document.getElementById('rules-alert');
     if (resp.success) {
-      alert.innerHTML = '<div style="padding:12px 16px;background:var(--accent-green-dim);border:1px solid rgba(0,229,160,0.3);border-radius:var(--radius);color:var(--accent-green);font-size:0.82rem;margin-bottom:16px">Rules applied successfully' + (DEMO_MODE ? ' (demo mode — not applied to system)' : '') + '.</div>';
+      setRulesAlert('Rules applied successfully' + (DEMO_MODE ? ' (demo mode - not applied to system).' : '.'));
     } else {
-      alert.innerHTML = '<div class="error-message">Apply failed: ' + esc(resp.error || 'Unknown error') + '</div>';
+      setRulesAlert('Apply failed: ' + (resp.error || 'Unknown error'), 'error');
     }
-    setTimeout(() => { alert.innerHTML = ''; }, 5000);
+    setTimeout(() => { setRulesAlert(''); }, 5000);
   } catch (e) {
-    document.getElementById('rules-alert').innerHTML = '<div class="error-message">Could not reach API.</div>';
+    setRulesAlert('Could not reach API.', 'error');
   }
 }
 
 async function rollbackRules() {
   try {
     const resp = await apiPost('/rules/rollback');
-    const alert = document.getElementById('rules-alert');
     if (resp.success) {
-      alert.innerHTML = '<div style="padding:12px 16px;background:var(--accent-green-dim);border:1px solid rgba(0,229,160,0.3);border-radius:var(--radius);color:var(--accent-green);font-size:0.82rem;margin-bottom:16px">Rollback successful.</div>';
+      setRulesAlert('Rollback successful.');
       fetchRules();
     } else {
-      alert.innerHTML = '<div class="error-message">' + esc(resp.error || 'Rollback failed') + '</div>';
+      setRulesAlert(resp.error || 'Rollback failed', 'error');
     }
-    setTimeout(() => { alert.innerHTML = ''; }, 5000);
+    setTimeout(() => { setRulesAlert(''); }, 5000);
   } catch (e) {
-    document.getElementById('rules-alert').innerHTML = '<div class="error-message">Could not reach API.</div>';
+    setRulesAlert('Could not reach API.', 'error');
   }
 }
 
@@ -2170,34 +2878,87 @@ async function fetchHosts() {
 async function fetchSessions() {
   try {
     const resp = await apiFetch('/monitor/sessions');
+    const tbody = document.getElementById('sessionsBody');
     if (!resp.success) {
-      document.getElementById('sessionsBody').innerHTML = '<tr><td colspan="4" class="session-empty"><p>Could not load sessions</p></td></tr>';
+      tbody.innerHTML = tableStateRow(resp.error || 'Could not load sessions.', 4, 'error');
       return;
     }
     const sessions = resp.data || [];
     document.getElementById('session-count-badge').textContent = sessions.length + ' sessions';
-    const tbody = document.getElementById('sessionsBody');
     if (sessions.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--text-dim)">No active sessions' + (DEMO_MODE ? ' (session tracking requires elevated privileges)' : '') + '</td></tr>';
+      tbody.innerHTML = tableStateRow(
+        DEMO_MODE
+          ? 'No demo sessions are currently active.'
+          : 'No active sessions visible. Session visibility may depend on host permissions.',
+        4
+      );
       return;
     }
     tbody.innerHTML = sessions.map(s => `
       <tr>
-        <td class="mono">${esc(s.local_addr)}</td>
-        <td class="mono">${esc(s.remote_addr)}</td>
-        <td><span class="rule-action action-accept">${esc(s.status)}</span></td>
-        <td class="mono">${s.pid != null ? s.pid : '—'}</td>
+        <td class="mono">${esc(s.source_ip || '—')}</td>
+        <td class="mono">${esc(s.destination || '—')}</td>
+        <td class="mono">${esc((s.protocol || 'unknown').toUpperCase())}</td>
+        <td class="mono">${esc(fmtDuration(s.duration))}</td>
       </tr>
     `).join('');
   } catch (e) {
-    document.getElementById('sessionsBody').innerHTML = '<tr><td colspan="4" class="session-empty"><p>Failed to load sessions (may require elevated privileges)</p></td></tr>';
+    document.getElementById('sessionsBody').innerHTML = tableStateRow(
+      'Failed to load sessions (may require elevated privileges).',
+      4,
+      'error'
+    );
   }
 }
 
+function renderPluginRouteControls(plugin) {
+  if (!plugin.routes || plugin.routes.length === 0) {
+    return '<div class="helper-copy">No plugin routes exposed.</div>';
+  }
+
+  return `<div class="plugin-route-list">${plugin.routes.map(route => {
+    const method = String(route.method || 'GET').toUpperCase();
+    const path = String(route.path || '');
+    const description = route.description ? `<div class="helper-copy">${esc(route.description)}</div>` : '';
+    const expectsDomain = method === 'POST' && path === 'query';
+    const payloadMode = expectsDomain ? 'domain' : 'json';
+    const placeholder = expectsDomain ? 'example.org' : '{"key":"value"}';
+    const formMarkup = method === 'POST'
+      ? `<form class="plugin-route-body" data-plugin-route-form data-plugin-name="${esc(plugin.name)}" data-route-path="${esc(path)}" data-payload-mode="${payloadMode}">
+          ${description}
+          <div class="plugin-route-actions">
+            <input class="plugin-route-input" name="payload" placeholder="${esc(placeholder)}" ${expectsDomain ? 'maxlength="253"' : ''}>
+            <button class="btn btn-sm" type="submit">Invoke</button>
+          </div>
+        </form>`
+      : `<div class="plugin-route-body">
+          ${description}
+          <div class="plugin-route-actions">
+            <button class="btn btn-sm" data-plugin-route-run data-plugin-name="${esc(plugin.name)}" data-route-path="${esc(path)}" data-route-method="${esc(method)}">Run</button>
+          </div>
+        </div>`;
+
+    return `<div class="plugin-route-item">
+      <div class="plugin-route-head">
+        <span class="route-chip"><strong>${esc(method)}</strong>${esc(path)}</span>
+      </div>
+      ${formMarkup}
+      <div class="plugin-route-response" hidden></div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
 async function fetchPlugins() {
+  const grid = document.getElementById('pluginGrid');
+  if (grid) {
+    grid.innerHTML = '<div class="section-state"><span class="section-inline-loader">Loading plugin inventory...</span></div>';
+  }
   try {
     const resp = await apiFetch('/plugins');
-    if (!resp.success) return;
+    if (!resp.success) {
+      grid.innerHTML = `<div class="section-state error">${esc(resp.error || 'Could not load plugins.')}</div>`;
+      return;
+    }
     const plugins = resp.data || [];
     const pluginsWithRoutes = await Promise.all(
       plugins.map(async plugin => {
@@ -2210,57 +2971,143 @@ async function fetchPlugins() {
       })
     );
     cachedPlugins = pluginsWithRoutes;
-    const grid = document.getElementById('pluginGrid');
     if (pluginsWithRoutes.length === 0) {
-      grid.innerHTML = '<div class="session-empty"><p>No plugins loaded</p></div>';
+      grid.innerHTML = '<div class="section-state empty">No plugins discovered by the runtime loader.</div>';
       updateOperationalPanels();
       return;
     }
     grid.innerHTML = pluginsWithRoutes.map(p => {
       const isActive = p.state === 'enabled';
       const stateLabel = p.state || 'unknown';
-      const routes = (p.routes || []).map(route => `
-        <span class="route-chip"><strong>${esc(route.method || 'GET')}</strong>${esc(route.path || '')}</span>
-      `).join('');
       return `
         <div class="plugin-card">
           <div class="plugin-card-header">
-            <span class="plugin-card-name">${esc(p.name)}</span>
+            <span class="plugin-card-name">${esc(p.display_name || p.name)}</span>
             <span class="plugin-status ${isActive ? 'active' : 'inactive'}">
               <span class="rule-state-dot ${isActive ? 'enabled' : 'disabled'}"></span>
               ${esc(stateLabel)}
             </span>
           </div>
           <div class="plugin-card-desc">${esc(p.description || 'No description available')}</div>
-          <div class="plugin-routes">${routes || '<span class="helper-copy">No plugin routes exposed.</span>'}</div>
+          <div class="helper-copy" style="margin-bottom:12px">Version ${esc(p.version || 'unknown')} ${p.author ? '&middot; ' + esc(p.author) : ''}</div>
+          ${renderPluginRouteControls(p)}
           <div class="helper-copy">Plugin API proxy: <span class="mono">/api/v1/plugins/${esc(p.name)}/api/&lt;subpath&gt;</span></div>
           <div class="plugin-card-footer">
             ${isActive
-              ? `<button class="btn btn-sm btn-danger" onclick="togglePlugin('${esc(p.name)}', false)">Disable</button>`
-              : `<button class="btn btn-sm btn-primary" onclick="togglePlugin('${esc(p.name)}', true)">Enable</button>`
+              ? `<button class="btn btn-sm btn-danger" data-plugin-toggle="disable" data-plugin-name="${esc(p.name)}">Disable</button>`
+              : `<button class="btn btn-sm btn-primary" data-plugin-toggle="enable" data-plugin-name="${esc(p.name)}">Enable</button>`
             }
           </div>
         </div>`;
     }).join('');
     updateOperationalPanels();
   } catch (e) {
-    document.getElementById('pluginGrid').innerHTML = '<div class="session-empty"><p>Failed to load plugins</p></div>';
+    document.getElementById('pluginGrid').innerHTML = '<div class="section-state error">Failed to load plugins.</div>';
   }
 }
 
 async function togglePlugin(name, enable) {
   try {
-    await apiPost('/plugins/' + encodeURIComponent(name) + '/' + (enable ? 'enable' : 'disable'));
+    const response = await apiPost('/plugins/' + encodeURIComponent(name) + '/' + (enable ? 'enable' : 'disable'));
+    if (!response.success) {
+      throw new Error(response.error || 'Plugin state change failed.');
+    }
     fetchPlugins();
   } catch (e) {
     console.error('Plugin toggle failed:', e);
   }
 }
 
+async function invokePluginRoute(pluginName, routePath, payload = null, responseNode = null) {
+  if (responseNode) {
+    responseNode.hidden = false;
+    responseNode.classList.remove('error');
+    responseNode.textContent = 'Running route...';
+  }
+  try {
+    const method = payload === null ? 'GET' : 'POST';
+    const response = method === 'GET'
+      ? await apiFetch('/plugins/' + encodeURIComponent(pluginName) + '/api/' + routePath)
+      : await apiPost('/plugins/' + encodeURIComponent(pluginName) + '/api/' + routePath, payload);
+
+    if (!response.success) {
+      throw new Error(response.error || 'Plugin route failed.');
+    }
+
+    if (responseNode) {
+      responseNode.hidden = false;
+      responseNode.classList.remove('error');
+      responseNode.textContent = JSON.stringify(response.data, null, 2);
+    }
+  } catch (error) {
+    if (responseNode) {
+      responseNode.hidden = false;
+      responseNode.classList.add('error');
+      responseNode.textContent = error.message || 'Route invocation failed.';
+    }
+  }
+}
+
+document.getElementById('pluginGrid').addEventListener('click', async event => {
+  const toggleButton = event.target.closest('[data-plugin-toggle]');
+  if (toggleButton) {
+    toggleButton.disabled = true;
+    await togglePlugin(toggleButton.dataset.pluginName, toggleButton.dataset.pluginToggle === 'enable');
+    toggleButton.disabled = false;
+    return;
+  }
+
+  const routeButton = event.target.closest('[data-plugin-route-run]');
+  if (!routeButton) return;
+  const container = routeButton.closest('.plugin-route-item');
+  const responseNode = container?.querySelector('.plugin-route-response') || null;
+  routeButton.disabled = true;
+  await invokePluginRoute(routeButton.dataset.pluginName, routeButton.dataset.routePath, null, responseNode);
+  routeButton.disabled = false;
+});
+
+document.getElementById('pluginGrid').addEventListener('submit', async event => {
+  const form = event.target.closest('[data-plugin-route-form]');
+  if (!form) return;
+  event.preventDefault();
+
+  const input = form.querySelector('input[name="payload"]');
+  const responseNode = form.closest('.plugin-route-item')?.querySelector('.plugin-route-response') || null;
+  const submitButton = form.querySelector('button[type="submit"]');
+  let payload = {};
+
+  try {
+    const raw = String(input?.value || '').trim();
+    if (form.dataset.payloadMode === 'domain') {
+      const domain = sanitizeText(raw.toLowerCase(), 253).replace(/\.+$/, '');
+      if (!domain) {
+        throw new Error('Enter a domain to query.');
+      }
+      payload = { domain };
+    } else {
+      payload = raw ? JSON.parse(raw) : {};
+    }
+  } catch (error) {
+    if (responseNode) {
+      responseNode.hidden = false;
+      responseNode.classList.add('error');
+      responseNode.textContent = error.message || 'Invalid route payload.';
+    }
+    return;
+  }
+
+  submitButton.disabled = true;
+  await invokePluginRoute(form.dataset.pluginName, form.dataset.routePath, payload, responseNode);
+  submitButton.disabled = false;
+});
+
 async function fetchSystemInfo() {
   try {
     const resp = await apiFetch('/system/info');
-    if (!resp.success) return;
+    if (!resp.success) {
+      document.getElementById('sysInfoGrid').innerHTML = `<div class="info-item"><div class="info-item-label">Error</div><div class="info-item-value">${esc(resp.error || 'Unavailable')}</div></div>`;
+      return null;
+    }
     const info = resp.data;
     cachedSystemInfo = info;
     document.getElementById('sysInfoGrid').innerHTML = [
@@ -2269,7 +3116,7 @@ async function fetchSystemInfo() {
       { label: 'Platform', value: info.platform || '—' },
       { label: 'Python', value: info.python || '—' },
       { label: 'nftables', value: info.nftables_available ? 'Available' : 'Not available' },
-      { label: 'Mode', value: DEMO_MODE ? 'Demo' : 'Live' },
+      { label: 'Mode', value: info.mode || (DEMO_MODE ? 'demo' : 'live') },
     ].map(i => `
       <div class="info-item">
         <div class="info-item-label">${i.label}</div>
@@ -2280,9 +3127,59 @@ async function fetchSystemInfo() {
     // Update version in topbar
     document.getElementById('version-label').textContent = 'v' + (info.version || '0.2.0');
     updateOperationalPanels();
+    return info;
   } catch (e) {
     console.error('Failed to fetch system info:', e);
+    document.getElementById('sysInfoGrid').innerHTML = '<div class="info-item"><div class="info-item-label">Error</div><div class="info-item-value">Failed to load system information</div></div>';
+    return null;
   }
+}
+
+async function fetchRuntimeConfig() {
+  try {
+    const response = await apiFetch('/system/config');
+    if (!response.success) {
+      throw new Error(response.error || 'Could not load runtime configuration.');
+    }
+    const config = response.data;
+    cachedRuntimeConfig = config;
+
+    document.getElementById('configStateGrid').innerHTML = [
+      { label: 'Environment', value: config.environment || 'unknown' },
+      { label: 'Mode', value: config.mode || (DEMO_MODE ? 'demo' : 'live') },
+      { label: 'Secret Key', value: config.secret_key_configured ? 'Configured' : 'Demo-only fallback' },
+      { label: 'Loaded Plugins', value: String((config.loaded_plugins || []).length) },
+    ].map(item => `
+      <div class="info-item">
+        <div class="info-item-label">${item.label}</div>
+        <div class="info-item-value">${esc(item.value)}</div>
+      </div>
+    `).join('');
+
+    const pluginList = document.getElementById('configPluginList');
+    if (config.plugin_states && config.plugin_states.length) {
+      pluginList.innerHTML = config.plugin_states.map(plugin => `
+        <span class="config-pill">${esc(plugin.name)}:${esc(plugin.state)}</span>
+      `).join('');
+    } else {
+      pluginList.innerHTML = '<span class="config-pill">No plugins loaded</span>';
+    }
+
+    updateOperationalPanels();
+    return config;
+  } catch (error) {
+    console.error('Failed to fetch runtime config:', error);
+    document.getElementById('configStateGrid').innerHTML = '<div class="info-item"><div class="info-item-label">Error</div><div class="info-item-value">Runtime configuration unavailable</div></div>';
+    document.getElementById('configPluginList').innerHTML = '<span class="config-pill">Unavailable</span>';
+    return null;
+  }
+}
+
+async function fetchConfigData() {
+  document.getElementById('sysInfoGrid').innerHTML = '<div class="info-item"><div class="info-item-label">Loading</div><div class="info-item-value">Gathering system metadata...</div></div>';
+  document.getElementById('configStateGrid').innerHTML = '<div class="info-item"><div class="info-item-label">Loading</div><div class="info-item-value">Reading runtime configuration...</div></div>';
+  document.getElementById('configPluginList').innerHTML = '<span class="config-pill">Loading...</span>';
+  await Promise.all([fetchSystemInfo(), fetchRuntimeConfig()]);
 }
 
 // ═══ POLLING LOOP ═══
@@ -2290,7 +3187,7 @@ function startPolling() {
   // Initial data load
   fetchDashboardData();
   fetchRules();
-  fetchSystemInfo();
+  fetchConfigData();
   fetchPlugins();
   renderSessionNotice();
 
