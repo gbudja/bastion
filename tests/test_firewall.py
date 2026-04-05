@@ -521,6 +521,28 @@ class TestApiAndWeb:
         assert response.status_code == 200
         assert payload["data"]["enabled"] is True
 
+    def test_sessions_endpoint_returns_control_plane_fields(self):
+        response = self.client.get("/api/v1/monitor/sessions")
+        payload = response.get_json()
+
+        assert response.status_code == 200
+        assert payload["success"] is True
+        assert payload["data"]
+        first = payload["data"][0]
+        assert set(first) >= {"source_ip", "destination", "protocol", "duration"}
+        assert first["protocol"] in {"tcp", "udp", "unknown"}
+
+    def test_system_config_reports_mode_and_plugins(self, monkeypatch):
+        monkeypatch.setenv("BASTION_ENVIRONMENT", "staging")
+        response = self.client.get("/api/v1/system/config")
+        payload = response.get_json()
+
+        assert response.status_code == 200
+        assert payload["success"] is True
+        assert payload["data"]["environment"] == "staging"
+        assert payload["data"]["mode"] == "demo"
+        assert "dns_filter" in payload["data"]["loaded_plugins"]
+
     def test_dashboard_template_exposes_navigation_shell(self):
         response = self.client.get("/")
         html = response.get_data(as_text=True)
@@ -530,6 +552,8 @@ class TestApiAndWeb:
         assert 'id="controlPlaneGrid"' in html
         assert 'id="pluginSummary"' in html
         assert 'id="sessionNotice"' in html
+        assert 'id="ruleEditorPanel"' in html
+        assert 'id="configStateGrid"' in html
 
     def test_non_demo_app_requires_secret_key(self, monkeypatch):
         monkeypatch.delenv("BASTION_SECRET_KEY", raising=False)

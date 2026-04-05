@@ -8,6 +8,8 @@ system monitoring, and plugin control.
 from __future__ import annotations
 
 import logging
+import os
+import platform
 from typing import Any
 
 from flask import Blueprint, Response, jsonify, request
@@ -83,6 +85,11 @@ def _require_plugin_manager() -> PluginManager:
     if _plugin_manager is None:
         raise RuntimeError("API not initialised")
     return _plugin_manager
+
+
+def _runtime_mode() -> str:
+    """Return the current Bastion operating mode."""
+    return "demo" if _monitor is not None and _monitor.demo_mode else "live"
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -298,21 +305,23 @@ def get_hosts() -> tuple[Response, int]:
 @api_bp.route("/monitor/sessions", methods=["GET"])
 def get_sessions() -> tuple[Response, int]:
     """Get active network sessions."""
-    import psutil
+    try:
+        monitor = _require_monitor()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
 
-    connections = psutil.net_connections(kind="inet")
-    sessions = []
-    for conn in connections:
-        if conn.status == "ESTABLISHED" and conn.raddr:
-            sessions.append(
-                {
-                    "local_addr": f"{conn.laddr.ip}:{conn.laddr.port}",
-                    "remote_addr": f"{conn.raddr.ip}:{conn.raddr.port}",
-                    "status": conn.status,
-                    "pid": conn.pid,
-                }
-            )
-    return api_response(sessions[:200])  # Limit to 200 sessions
+    sessions = [
+        {
+            "source_ip": session.source_ip,
+            "destination": session.destination,
+            "protocol": session.protocol,
+            "duration": round(session.duration, 2),
+            "status": session.status,
+            "pid": session.pid,
+        }
+        for session in monitor.get_active_sessions(limit=200)
+    ]
+    return api_response(sessions)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -416,8 +425,6 @@ def call_plugin_route(name: str, subpath: str) -> tuple[Response, int]:
 @api_bp.route("/system/info", methods=["GET"])
 def system_info() -> tuple[Response, int]:
     """Get Bastion system information."""
-    import platform
-
     nft_available = False
     if _rule_manager is not None:
         nft_available = _rule_manager.backend.is_available()
@@ -429,5 +436,37 @@ def system_info() -> tuple[Response, int]:
             "platform": platform.platform(),
             "python": platform.python_version(),
             "nftables_available": nft_available,
+            "mode": _runtime_mode(),
+        }
+    )
+
+
+@api_bp.route("/system/config", methods=["GET"])
+def system_config() -> tuple[Response, int]:
+    """Return safe, read-only runtime configuration details for the UI."""
+    try:
+        monitor = _require_monitor()
+        pm = _require_plugin_manager()
+    except RuntimeError as exc:
+        return api_response(error=str(exc), status=503)
+
+    plugin_status = pm.get_status()
+    environment = (
+        os.environ.get("BASTION_ENVIRONMENT")
+        or os.environ.get("FLASK_ENV")
+        or ("development" if monitor.demo_mode else "production")
+    )
+
+    return api_response(
+        {
+            "environment": environment,
+            "mode": _runtime_mode(),
+            "demo_mode": monitor.demo_mode,
+            "loaded_plugins": [plugin["name"] for plugin in plugin_status],
+            "plugin_states": [
+                {"name": plugin["name"], "state": plugin["state"]}
+                for plugin in plugin_status
+            ],
+            "secret_key_configured": bool(os.environ.get("BASTION_SECRET_KEY")),
         }
     )

@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import logging
 import math
+import socket
 import time
 from collections import deque
 from dataclasses import dataclass, field
@@ -90,6 +91,18 @@ class TrackedHost:
     active_connections: int = 0
 
 
+@dataclass
+class SessionInfo:
+    """A normalized active network session for UI/API consumption."""
+
+    source_ip: str
+    destination: str
+    protocol: str
+    duration: float
+    status: str
+    pid: int | None = None
+
+
 class NetworkMonitor:
     """
     Real-time network and system monitoring engine.
@@ -125,6 +138,7 @@ class NetworkMonitor:
 
         # Demo mode: stable base time so simulation curves are consistent
         self._demo_start: float = time.time()
+        self._session_started_at: dict[str, float] = {}
 
     # ─── Demo helpers ────────────────────────────────────────────────
 
@@ -373,6 +387,107 @@ class NetworkMonitor:
             pass
 
         return list(self.hosts.values())
+
+    # ─── Session Tracking ───────────────────────────────────────────
+
+    @staticmethod
+    def _connection_protocol(sock_type: int) -> str:
+        """Return a protocol label for a socket type."""
+        if sock_type == socket.SOCK_STREAM:
+            return "tcp"
+        if sock_type == socket.SOCK_DGRAM:
+            return "udp"
+        return "unknown"
+
+    @staticmethod
+    def _connection_key(conn: Any) -> str:
+        """Build a stable key for tracking session first-seen times."""
+        local = f"{getattr(conn.laddr, 'ip', '')}:{getattr(conn.laddr, 'port', '')}"
+        remote = f"{getattr(conn.raddr, 'ip', '')}:{getattr(conn.raddr, 'port', '')}"
+        return f"{conn.pid}:{conn.type}:{local}:{remote}"
+
+    def _demo_sessions(self) -> list[SessionInfo]:
+        """Return stable simulated sessions for demo environments."""
+        t = time.time() - self._demo_start
+        durations = [
+            42 + int(t % 30),
+            185 + int((t * 1.3) % 60),
+            960 + int((t * 0.8) % 120),
+        ]
+        return [
+            SessionInfo(
+                source_ip="203.0.113.14",
+                destination="172.17.0.2:443",
+                protocol="tcp",
+                duration=durations[0],
+                status="ESTABLISHED",
+                pid=412,
+            ),
+            SessionInfo(
+                source_ip="198.51.100.24",
+                destination="172.17.0.2:22",
+                protocol="tcp",
+                duration=durations[1],
+                status="ESTABLISHED",
+                pid=184,
+            ),
+            SessionInfo(
+                source_ip="192.0.2.53",
+                destination="172.17.0.2:53",
+                protocol="udp",
+                duration=durations[2],
+                status="ESTABLISHED",
+                pid=None,
+            ),
+        ]
+
+    def get_active_sessions(self, limit: int = 200) -> list[SessionInfo]:
+        """
+        Return normalized active sessions with protocol and observed duration.
+
+        Duration is "time since Bastion first observed the connection", not a
+        kernel-reported TCP age. This keeps the API honest while still giving
+        operators useful relative longevity data.
+        """
+        if self.demo_mode:
+            return self._demo_sessions()[:limit]
+
+        try:
+            connections = psutil.net_connections(kind="inet")
+        except (psutil.AccessDenied, PermissionError):
+            logger.debug("net_connections: access denied, reporting zero sessions")
+            self._session_started_at.clear()
+            return []
+
+        now = time.time()
+        active_keys: set[str] = set()
+        sessions: list[SessionInfo] = []
+
+        for conn in connections:
+            if conn.status != psutil.CONN_ESTABLISHED or not conn.raddr:
+                continue
+
+            key = self._connection_key(conn)
+            active_keys.add(key)
+            started_at = self._session_started_at.setdefault(key, now)
+
+            sessions.append(
+                SessionInfo(
+                    source_ip=conn.raddr.ip,
+                    destination=f"{conn.laddr.ip}:{conn.laddr.port}",
+                    protocol=self._connection_protocol(conn.type),
+                    duration=max(0.0, now - started_at),
+                    status=conn.status,
+                    pid=conn.pid,
+                )
+            )
+
+        self._session_started_at = {
+            key: started for key, started in self._session_started_at.items() if key in active_keys
+        }
+
+        sessions.sort(key=lambda session: session.duration, reverse=True)
+        return sessions[:limit]
 
     # ─── Aggregated Dashboard Data ───────────────────────────────────
 
