@@ -464,8 +464,7 @@ def system_config() -> tuple[Response, int]:
             "demo_mode": monitor.demo_mode,
             "loaded_plugins": [plugin["name"] for plugin in plugin_status],
             "plugin_states": [
-                {"name": plugin["name"], "state": plugin["state"]}
-                for plugin in plugin_status
+                {"name": plugin["name"], "state": plugin["state"]} for plugin in plugin_status
             ],
             "secret_key_configured": bool(os.environ.get("BASTION_SECRET_KEY")),
         }
