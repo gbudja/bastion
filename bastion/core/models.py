@@ -8,6 +8,7 @@ All models are backend-agnostic and serialize to/from YAML and JSON.
 from __future__ import annotations
 
 import ipaddress
+import re
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -166,14 +167,33 @@ class FirewallRule:
         if self.destination_address:
             errors.extend(self._validate_cidr(self.destination_address, "destination_address"))
 
-        if self.interface_in and len(self.interface_in) > 64:
-            errors.append("interface_in must be 64 characters or fewer")
+        # interface_in, interface_out, log_prefix, and jump_target are
+        # interpolated into the generated nft script.  They MUST contain
+        # only safe characters — no quotes, semicolons, newlines, or
+        # shell metacharacters — to prevent nft command injection.
+        safe_ident = re.compile(r"^[a-zA-Z0-9._\-]+$")
+        safe_prefix = re.compile(r"^[a-zA-Z0-9._\-: ]+$")
 
-        if self.interface_out and len(self.interface_out) > 64:
-            errors.append("interface_out must be 64 characters or fewer")
+        if self.interface_in:
+            if len(self.interface_in) > 64:
+                errors.append("interface_in must be 64 characters or fewer")
+            if not safe_ident.match(self.interface_in):
+                errors.append("interface_in contains invalid characters")
 
-        if self.log_prefix and len(self.log_prefix) > 64:
-            errors.append("log_prefix must be 64 characters or fewer")
+        if self.interface_out:
+            if len(self.interface_out) > 64:
+                errors.append("interface_out must be 64 characters or fewer")
+            if not safe_ident.match(self.interface_out):
+                errors.append("interface_out contains invalid characters")
+
+        if self.log_prefix:
+            if len(self.log_prefix) > 64:
+                errors.append("log_prefix must be 64 characters or fewer")
+            if not safe_prefix.match(self.log_prefix):
+                errors.append("log_prefix contains invalid characters")
+
+        if self.jump_target and not safe_ident.match(self.jump_target):
+            errors.append("jump_target contains invalid characters")
 
         if self.priority < 0 or self.priority > 10000:
             errors.append("Priority must be between 0 and 10000")

@@ -51,7 +51,7 @@ def cli(verbose: bool) -> None:
 
 
 @cli.command()
-@click.option("--host", default="0.0.0.0", help="Bind address")
+@click.option("--host", default="127.0.0.1", help="Bind address")
 @click.option("--port", default=8443, help="Port number")
 @click.option("--demo", is_flag=True, help="Run in demo mode (no root required)")
 @click.option("--config", type=click.Path(), default=None, help="Config file path")
@@ -97,8 +97,8 @@ def start(host: str, port: int, demo: bool, config: str | None) -> None:
     except Exception as e:
         console.print(f"[yellow]⚠[/yellow] Could not load rules: {e}")
 
-    # Warn when binding to all interfaces in non-demo mode (no auth yet)
-    if not demo and host in ("0.0.0.0", "::"):
+    # Warn when binding to all interfaces — no auth yet, always dangerous.
+    if host in ("0.0.0.0", "::"):
         console.print(
             Panel(
                 "[red]WARNING:[/red] Binding to all interfaces with no authentication.\n"

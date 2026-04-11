@@ -253,7 +253,8 @@ class PluginManager:
                     "description": meta.description,
                     "author": meta.author,
                     "state": self._states.get(name, PluginState.LOADED).value,
-                    "config": self._configs.get(name, {}),
+                    # config intentionally omitted — may contain sensitive
+                    # data (URLs, credentials) and there is no auth layer yet.
                 }
             )
         return result

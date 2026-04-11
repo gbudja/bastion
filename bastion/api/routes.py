@@ -8,8 +8,6 @@ system monitoring, and plugin control.
 from __future__ import annotations
 
 import logging
-import os
-import platform
 from typing import Any
 
 from flask import Blueprint, Response, jsonify, request
@@ -424,7 +422,11 @@ def call_plugin_route(name: str, subpath: str) -> tuple[Response, int]:
 
 @api_bp.route("/system/info", methods=["GET"])
 def system_info() -> tuple[Response, int]:
-    """Get Bastion system information."""
+    """Get Bastion system information.
+
+    Does NOT expose hostname, OS platform, or Python version — these
+    are information-leak vectors an attacker could use for targeting.
+    """
     nft_available = False
     if _rule_manager is not None:
         nft_available = _rule_manager.backend.is_available()
@@ -432,9 +434,6 @@ def system_info() -> tuple[Response, int]:
     return api_response(
         {
             "version": __version__,
-            "hostname": platform.node(),
-            "platform": platform.platform(),
-            "python": platform.python_version(),
             "nftables_available": nft_available,
             "mode": _runtime_mode(),
         }
@@ -451,21 +450,14 @@ def system_config() -> tuple[Response, int]:
         return api_response(error=str(exc), status=503)
 
     plugin_status = pm.get_status()
-    environment = (
-        os.environ.get("BASTION_ENVIRONMENT")
-        or os.environ.get("FLASK_ENV")
-        or ("development" if monitor.demo_mode else "production")
-    )
 
     return api_response(
         {
-            "environment": environment,
             "mode": _runtime_mode(),
             "demo_mode": monitor.demo_mode,
             "loaded_plugins": [plugin["name"] for plugin in plugin_status],
             "plugin_states": [
                 {"name": plugin["name"], "state": plugin["state"]} for plugin in plugin_status
             ],
-            "secret_key_configured": bool(os.environ.get("BASTION_SECRET_KEY")),
         }
     )

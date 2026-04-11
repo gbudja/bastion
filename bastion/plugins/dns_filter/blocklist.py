@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 import re
+import ssl
 import urllib.request
 from pathlib import Path
 from urllib.parse import urlparse
@@ -17,6 +18,9 @@ logger = logging.getLogger(__name__)
 
 # Regex matching a valid domain label component
 _DOMAIN_RE = re.compile(r"^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$")
+
+# Maximum number of bytes to read from a remote blocklist (10 MB).
+_MAX_BLOCKLIST_BYTES = 10 * 1024 * 1024
 
 
 def _is_valid_domain(domain: str) -> bool:
@@ -66,17 +70,37 @@ class BlocklistManager:
 
     def load_from_url(self, url: str, timeout: int = 15) -> int:
         """
-        Fetch and load a blocklist from a remote URL.
+        Fetch and load a blocklist from a remote HTTPS URL.
+
+        Only ``https://`` is accepted — plain HTTP is rejected to prevent
+        a compromised network from injecting malicious blocklist entries.
+        Responses larger than ``_MAX_BLOCKLIST_BYTES`` (10 MB) are rejected.
 
         Returns the number of domains added, or 0 on error.
         """
         parsed = urlparse(url)
-        if parsed.scheme not in {"http", "https"}:
-            logger.error("Rejected blocklist URL with unsupported scheme: %s", url)
+        # Security: reject plain HTTP to prevent MITM blocklist injection.
+        if parsed.scheme != "https":
+            logger.error(
+                "Rejected blocklist URL with non-HTTPS scheme (%s): %s",
+                parsed.scheme,
+                url,
+            )
             return 0
         try:
-            with urllib.request.urlopen(url, timeout=timeout) as resp:  # noqa: S310
-                text = resp.read().decode("utf-8", errors="replace")
+            ssl_ctx = ssl.create_default_context()
+            with urllib.request.urlopen(
+                url, timeout=timeout, context=ssl_ctx
+            ) as resp:  # noqa: S310
+                raw = resp.read(_MAX_BLOCKLIST_BYTES + 1)
+                if len(raw) > _MAX_BLOCKLIST_BYTES:
+                    logger.error(
+                        "Blocklist at %s exceeds %d byte limit — rejected",
+                        url,
+                        _MAX_BLOCKLIST_BYTES,
+                    )
+                    return 0
+                text = raw.decode("utf-8", errors="replace")
             added = self._parse_and_add(text)
             self._sources.append(url)
             logger.info("Loaded %d domains from %s", added, url)

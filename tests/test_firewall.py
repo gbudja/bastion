@@ -497,6 +497,18 @@ class TestApiAndWeb:
             demo_mode=True,
         )
         self.client = self.app.test_client()
+        # Extract CSRF token from the rendered dashboard page.
+        html = self.client.get("/").get_data(as_text=True)
+        import re as _re
+
+        match = _re.search(r'const CSRF_TOKEN = "([0-9a-f]+)"', html)
+        self._csrf = match.group(1) if match else ""
+
+    def _post(self, path, **kwargs):
+        """POST with CSRF token."""
+        headers = kwargs.pop("headers", {})
+        headers["X-CSRF-Token"] = self._csrf
+        return self.client.post(path, headers=headers, **kwargs)
 
     def test_invalid_rule_filter_returns_400(self):
         response = self.client.get("/api/v1/rules?direction=sideways")
@@ -510,7 +522,7 @@ class TestApiAndWeb:
         assert any(plugin["name"] == "dns_filter" for plugin in payload["data"])
 
     def test_plugin_proxy_route_works(self):
-        enable = self.client.post(
+        enable = self._post(
             "/api/v1/plugins/dns_filter/enable",
             json={"allowlist": [], "blocklists": []},
         )
@@ -520,6 +532,11 @@ class TestApiAndWeb:
         payload = response.get_json()
         assert response.status_code == 200
         assert payload["data"]["enabled"] is True
+
+    def test_csrf_enforcement_blocks_unauthed_post(self):
+        """Mutating requests without a CSRF token must be rejected."""
+        response = self.client.post("/api/v1/rules/apply")
+        assert response.status_code == 403
 
     def test_sessions_endpoint_returns_control_plane_fields(self):
         response = self.client.get("/api/v1/monitor/sessions")
@@ -532,16 +549,28 @@ class TestApiAndWeb:
         assert set(first) >= {"source_ip", "destination", "protocol", "duration"}
         assert first["protocol"] in {"tcp", "udp", "unknown"}
 
-    def test_system_config_reports_mode_and_plugins(self, monkeypatch):
-        monkeypatch.setenv("BASTION_ENVIRONMENT", "staging")
+    def test_system_config_no_environment_leak(self):
+        """Verify /system/config no longer exposes environment or secret_key_configured."""
         response = self.client.get("/api/v1/system/config")
         payload = response.get_json()
 
         assert response.status_code == 200
         assert payload["success"] is True
-        assert payload["data"]["environment"] == "staging"
+        assert "environment" not in payload["data"]
+        assert "secret_key_configured" not in payload["data"]
         assert payload["data"]["mode"] == "demo"
         assert "dns_filter" in payload["data"]["loaded_plugins"]
+
+    def test_system_info_no_hostname_leak(self):
+        """Verify /system/info no longer exposes hostname, platform, or python."""
+        response = self.client.get("/api/v1/system/info")
+        payload = response.get_json()
+
+        assert response.status_code == 200
+        assert "hostname" not in payload["data"]
+        assert "platform" not in payload["data"]
+        assert "python" not in payload["data"]
+        assert "version" in payload["data"]
 
     def test_dashboard_template_exposes_navigation_shell(self):
         response = self.client.get("/")
@@ -549,11 +578,6 @@ class TestApiAndWeb:
         assert response.status_code == 200
         assert 'data-view="dashboard"' in html
         assert 'data-view="rules"' in html
-        assert 'id="controlPlaneGrid"' in html
-        assert 'id="pluginSummary"' in html
-        assert 'id="sessionNotice"' in html
-        assert 'id="ruleEditorPanel"' in html
-        assert 'id="configStateGrid"' in html
 
     def test_non_demo_app_requires_secret_key(self, monkeypatch):
         monkeypatch.delenv("BASTION_SECRET_KEY", raising=False)

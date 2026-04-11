@@ -1883,6 +1883,7 @@ tbody tr:hover { background: var(--bg-card-hover); }
 <script>
 // ═══ STATE ═══
 const DEMO_MODE = {{ 'true' if demo_mode else 'false' }};
+const CSRF_TOKEN = "{{ csrf_token }}";
 let currentView = 'dashboard';
 let currentSidebar = 'overview';
 let cachedStats = null;
@@ -2046,6 +2047,12 @@ function onViewEnter(viewId) {
 // ═══ API HELPERS ═══
 async function apiRequest(path, options = {}) {
   try {
+    // Attach CSRF token to all mutating requests.
+    const method = (options.method || 'GET').toUpperCase();
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
+      options.headers = options.headers || {};
+      options.headers['X-CSRF-Token'] = CSRF_TOKEN;
+    }
     const resp = await fetch('/api/v1' + path, options);
     const data = await resp.json();
     if (!apiOk) {
